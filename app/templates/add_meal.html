@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" >
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Add Meal</title>
+</head>
+
+<body class="dashboard-bg">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">CaloFit</a>
+
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Dashboard</a>
+                <a class="nav-link" href="/meals/new">Add Meal</a>
+                <a class="nav-link" href="/meals/history">Meal History</a>
+                <a class="nav-link" href="/foods">Foods</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main container -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <!-- Page heading -->
+                <div class="text-center mb-4">
+                    <h1 class="fw-bold">Add a New Meal</h1>
+                    <p class="text-muted">Enter the meal information below.</p>
+                </div>
+
+                <!-- Meal form card -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+
+                        <form action="#" method="POST">
+
+                            <!-- Meal name -->
+                            <div class="mb-3">
+                                <label for="meal_name" class="form-label">Meal Name</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="meal_name"
+                                    name="meal_name"
+                                    placeholder="Example: Breakfast"
+                                >
+                            </div>
+
+                            <!-- Meal date -->
+                            <div class="mb-3">
+                                <label for="meal_date" class="form-label">Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="meal_date"
+                                    name="meal_date"
+                                >
+                            </div>
+
+                            <!-- Meal time -->
+                            <div class="mb-3">
+                                <label for="meal_time" class="form-label">Time</label>
+                                <input
+                                    type="time"
+                                    class="form-control"
+                                    id="meal_time"
+                                    name="meal_time"
+                                >
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea
+                                    class="form-control"
+                                    id="notes"
+                                    name="notes"
+                                    rows="3"
+                                    placeholder="Optional notes about this meal"
+                                ></textarea>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/" class="btn btn-outline-secondary">Back</a>
+                                <button type="submit" class="btn btn-primary">Save Meal</button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

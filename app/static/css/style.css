@@ -1,0 +1,27 @@
+/* Background gradient similar to your design */
+.dashboard-bg {
+    background: linear-gradient(to right, #c1e1c1, #9fb9e6);
+    min-height: 100vh;
+}
+
+/* Meal card styling */
+.meal-card {
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+}
+
+/* Totals section */
+.totals-box {
+    padding: 20px;
+    border-radius: 10px;
+    background: transparent;
+}
+.totals-box h3 {
+    font-weight: bold;
+}
+.totals-box h4 {
+    margin-top: 10px;
+}
+.totals-box h5 {
+    margin-top: 10px;
+}

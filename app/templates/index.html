@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>CaloFit Dashboard</title>
+</head>
+
+<body class="dashboard-bg">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="#">CaloFit</a>
+
+        <form class="d-flex mx-3">
+            <input class="form-control me-2" type="search" placeholder="Search Nutritional Database">
+        </form>
+
+        <div class="navbar-nav">
+            <a class="nav-link" href="#">Food Log</a>
+            <a class="nav-link" href="#">Mood Tracker</a>
+            <a class="nav-link" href="#">Weekly Schedule</a>
+            <a class="nav-link" href="#">About You</a>
+            <a class="nav-link" href="#">About Us</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-4">
+
+    <h3 class="mb-4">Today's Data</h3>
+
+    <div class="row">
+
+        <!-- Meal cards -->
+        <div class="col-md-8">
+            <div class="row g-4">
+
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="card meal-card text-center">
+                        <div class="card-header">7:30 AM</div>
+                        <div class="card-body">
+                            <h6>3 boiled eggs</h6>
+                            <img src="https://via.placeholder.com/120" class="img-fluid my-2">
+                            <p class="small mb-1">Calories: 215</p>
+                            <p class="small">Protein: 19g</p>
+                            <a href="#" class="small text-decoration-none">+ Add another item</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="card meal-card text-center">
+                        <div class="card-header">10:00 AM</div>
+                        <div class="card-body">
+                            <h6>Protein Cookie</h6>
+                            <img src="https://via.placeholder.com/120" class="img-fluid my-2">
+                            <p class="small mb-1">Calories: 460</p>
+                            <p class="small">Protein: 16g</p>
+                            <a href="#" class="small text-decoration-none">+ Add another item</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="card meal-card text-center">
+                        <div class="card-header">1:00 PM</div>
+                        <div class="card-body">
+                            <h6>Steak + Salad</h6>
+                            <img src="https://via.placeholder.com/120" class="img-fluid my-2">
+                            <p class="small mb-1">Calories: 600</p>
+                            <p class="small">Protein: 45g</p>
+                            <a href="#" class="small text-decoration-none">+ Add another item</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Total Summary -->
+        <div class="col-md-4 d-flex align-items-center">
+            <div class="totals-box text-center">
+                <h3>Total Today</h3>
+                <h4>1275 Calories</h4>
+                <h5>80g Protein</h5>
+                <p class="mt-3">Goals Met: ❌</p>
+                <a href="#" class="small text-decoration-none">Click for more info</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
