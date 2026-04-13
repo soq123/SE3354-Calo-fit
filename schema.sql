@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 DROP TABLE IF EXISTS meal_logs;
 DROP TABLE IF EXISTS users;
 
