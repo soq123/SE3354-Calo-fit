@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Mood Tracker | CaloFit{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="page-title mb-1">Mood Tracker</h1>
+    <p class="text-muted mb-0">Log how you feel and compare it with your nutrition patterns.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card calofit-card">
+            <div class="card-body">
+                <h4 class="section-title mb-3">How are you feeling today?</h4>
+
+                <form action="#" method="POST">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Mood</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <input type="radio" class="btn-check" name="mood" id="mood_happy" autocomplete="off">
+                            <label class="btn btn-outline-success" for="mood_happy">Happy</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood_focused" autocomplete="off">
+                            <label class="btn btn-outline-success" for="mood_focused">Focused</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood_neutral" autocomplete="off">
+                            <label class="btn btn-outline-success" for="mood_neutral">Neutral</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood_tired" autocomplete="off">
+                            <label class="btn btn-outline-success" for="mood_tired">Tired</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood_stressed" autocomplete="off">
+                            <label class="btn btn-outline-success" for="mood_stressed">Stressed</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="energy_level" class="form-label fw-semibold">Energy Level</label>
+                        <select class="form-select" id="energy_level" name="energy_level">
+                            <option selected disabled>Select energy level</option>
+                            <option value="1">1 - Very low</option>
+                            <option value="2">2 - Low</option>
+                            <option value="3">3 - Moderate</option>
+                            <option value="4">4 - Good</option>
+                            <option value="5">5 - High</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="mood_notes" class="form-label fw-semibold">Notes</label>
+                        <textarea class="form-control" id="mood_notes" name="mood_notes" rows="4" placeholder="Optional notes about sleep, hunger, stress, or how food may be affecting your day"></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="/" class="btn btn-outline-secondary">Back to Dashboard</a>
+                        <button type="submit" class="btn btn-success">Save Mood Entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card calofit-card mb-4">
+            <div class="card-body">
+                <h4 class="section-title">Nutrition Insight</h4>
+                <p class="mb-2">
+                    Low energy can sometimes line up with low calorie intake, low hydration, or not enough protein across the day.
+                </p>
+                <p class="small text-muted mb-0">
+                    Once mood entries and meals are connected, this section can show smarter personalized insights.
+                </p>
+            </div>
+        </div>
+
+        <div class="card calofit-card">
+            <div class="card-body">
+                <h4 class="section-title">Suggested Foods</h4>
+                <ul class="mb-3">
+                    <li>Greek yogurt with fruit</li>
+                    <li>Eggs with toast</li>
+                    <li>Chicken rice bowl</li>
+                    <li>Oatmeal with peanut butter</li>
+                </ul>
+                <a href="/foods" class="btn btn-outline-success btn-sm">Search Foods</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
