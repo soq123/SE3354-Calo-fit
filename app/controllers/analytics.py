@@ -39,3 +39,18 @@ def daily_summary_by_date(user_id, log_date):
         "calorie_goal": remaining["calorie_goal"],
         "calories_remaining": remaining["remaining"]
     })
+
+@analytics_bp.route("/analytics/weekly/<int:user_id>")
+def weekly_summary(user_id):
+    today = date.today()
+    week_ago = today - timedelta(days=6)
+    summary = get_weekly_summary(user_id, week_ago.isoformat(), today.isoformat())
+    average = get_weekly_average(user_id, week_ago.isoformat(), today.isoformat())
+    return jsonify({
+        "user_id": user_id,
+        "start_date": week_ago.isoformat(),
+        "end_date": today.isoformat(),
+        "daily_totals": summary,
+        "weekly_average": average,
+        "days_logged": len(summary)
+    })
