@@ -25,3 +25,6 @@ def init_db():
 
 def init_app(app):
     app.teardown_appcontext(close_db)
+    with app.app_context():
+        if not os.path.exists(DATABASE):
+            init_db()
