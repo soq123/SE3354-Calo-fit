@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 from datetime import date, timedelta
 from app.models.meal import (
     get_daily_total,
@@ -9,6 +9,8 @@ from app.models.meal import (
 )
 
 analytics_bp = Blueprint("analytics", __name__)
+
+USER_ID = 1
 
 @analytics_bp.route("/analytics/daily/<int:user_id>")
 def daily_summary(user_id):
@@ -39,8 +41,28 @@ def daily_summary_by_date(user_id, log_date):
         "calories_remaining": remaining["remaining"]
     })
 
+@analytics_bp.route("/analytics/weekly")
+def weekly_summary():
+    today = date.today()
+    week_ago = today - timedelta(days=6)
+    summary = get_weekly_summary(USER_ID, week_ago.isoformat(), today.isoformat())
+    average = get_weekly_average(USER_ID, week_ago.isoformat(), today.isoformat())
+    remaining_today = get_remaining_calories(USER_ID, today.isoformat())
+    calorie_goal = remaining_today["calorie_goal"]
+    total_meals = sum(day["meal_count"] for day in summary)
+    return render_template(
+        "weekly_summary.html",
+        summary=summary,
+        average=average,
+        calorie_goal=calorie_goal,
+        days_logged=len(summary),
+        total_meals=total_meals,
+        start_date=week_ago.isoformat(),
+        end_date=today.isoformat()
+    )
+
 @analytics_bp.route("/analytics/weekly/<int:user_id>")
-def weekly_summary(user_id):
+def weekly_summary_json(user_id):
     today = date.today()
     week_ago = today - timedelta(days=6)
     summary = get_weekly_summary(user_id, week_ago.isoformat(), today.isoformat())

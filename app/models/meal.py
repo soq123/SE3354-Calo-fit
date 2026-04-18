@@ -105,3 +105,14 @@ def delete_meal(meal_id, user_id):
         (meal_id, user_id)
     )
     db.commit()
+
+
+def update_meal(meal_id, user_id, food_name, calories, protein, carbs, fats, meal_type, log_date):
+    db = get_db()
+    db.execute(
+        """UPDATE meal_logs
+           SET food_name = ?, calories = ?, protein = ?, carbs = ?, fats = ?, meal_type = ?, log_date = ?
+           WHERE meal_id = ? AND user_id = ?""",
+        (food_name, calories, protein, carbs, fats, meal_type, log_date, meal_id, user_id)
+    )
+    db.commit()

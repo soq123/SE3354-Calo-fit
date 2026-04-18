@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Food Search | CaloFit{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="page-title mb-1">Food Search</h1>
+    <p class="text-muted mb-0">Search foods from your meal history.</p>
+</div>
+
+<div class="card calofit-card mb-4">
+    <div class="card-body">
+        <form action="/foods" method="GET" class="d-flex gap-2">
+            <input
+                type="text"
+                class="form-control"
+                name="q"
+                placeholder="Search for a food..."
+                value="{{ query }}"
+            >
+            <button type="submit" class="btn btn-success px-4">Search</button>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+    {% if results %}
+    <div class="card calofit-card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Food Name</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fats</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for food in results %}
+                    <tr>
+                        <td class="fw-semibold">{{ food['food_name'] }}</td>
+                        <td>{{ food['calories'] }} kcal</td>
+                        <td>{{ food['protein'] }}g</td>
+                        <td>{{ food['carbs'] }}g</td>
+                        <td>{{ food['fats'] }}g</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="card calofit-card text-center py-5">
+        <p class="text-muted mb-0">No results found for "<strong>{{ query }}</strong>".</p>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

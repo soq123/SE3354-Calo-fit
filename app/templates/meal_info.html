@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ meal['food_name'] }} | CaloFit{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="page-title mb-1">{{ meal['food_name'] }}</h1>
+    <p class="text-muted mb-0">{{ meal['meal_type'] }} &mdash; {{ meal['log_date'] }}</p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card calofit-card text-center py-3">
+            <div class="fs-3 fw-bold text-success">{{ meal['calories'] }}</div>
+            <div class="small text-muted">Calories (kcal)</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card calofit-card text-center py-3">
+            <div class="fs-3 fw-bold text-primary">{{ meal['protein'] }}g</div>
+            <div class="small text-muted">Protein</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card calofit-card text-center py-3">
+            <div class="fs-3 fw-bold text-warning">{{ meal['carbs'] }}g</div>
+            <div class="small text-muted">Carbs</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card calofit-card text-center py-3">
+            <div class="fs-3 fw-bold text-danger">{{ meal['fats'] }}g</div>
+            <div class="small text-muted">Fats</div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a href="/meals/history" class="btn btn-outline-secondary">Back to History</a>
+    <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn btn-primary">Edit</a>
+    <form action="/meals/{{ meal['meal_id'] }}/delete" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this meal?')">Delete</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Meal History | CaloFit{% endblock %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title mb-1">Meal History</h1>
+        <p class="text-muted mb-0">All meals you have logged.</p>
+    </div>
+    <a href="/meals/new" class="btn btn-success">+ Add Meal</a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% if meals %}
+<div class="card calofit-card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Food</th>
+                    <th>Type</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fats</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for meal in meals %}
+                <tr>
+                    <td>{{ meal['log_date'] }}</td>
+                    <td class="fw-semibold">{{ meal['food_name'] }}</td>
+                    <td><span class="badge bg-secondary">{{ meal['meal_type'] }}</span></td>
+                    <td>{{ meal['calories'] }} kcal</td>
+                    <td>{{ meal['protein'] }}g</td>
+                    <td>{{ meal['carbs'] }}g</td>
+                    <td>{{ meal['fats'] }}g</td>
+                    <td>
+                        <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                        <form action="/meals/{{ meal['meal_id'] }}/delete" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this meal?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card calofit-card text-center py-5">
+    <p class="text-muted mb-3">No meals logged yet.</p>
+    <a href="/meals/new" class="btn btn-success">Log Your First Meal</a>
+</div>
+{% endif %}
+{% endblock %}

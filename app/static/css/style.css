@@ -1,3 +1,25 @@
+.calofit-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: none;
+}
+
+.calofit-navbar {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #222;
+}
+
 /* Background gradient similar to your design */
 .dashboard-bg {
     background: linear-gradient(to right, #c1e1c1, #9fb9e6);
