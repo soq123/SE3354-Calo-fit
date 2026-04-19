@@ -1,5 +1,6 @@
 PRAGMA foreign_keys = ON;
 
+DROP TABLE IF EXISTS mood_logs;
 DROP TABLE IF EXISTS meal_logs;
 DROP TABLE IF EXISTS users;
 
@@ -23,5 +24,16 @@ CREATE TABLE meal_logs (
     meal_type TEXT NOT NULL CHECK(meal_type IN ('Breakfast', 'Lunch', 'Dinner', 'Snack')),
     log_date DATE NOT NULL,
     log_time TIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE mood_logs (
+    mood_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    mood TEXT NOT NULL,
+    energy_level INTEGER NOT NULL CHECK(energy_level BETWEEN 1 AND 5),
+    notes TEXT,
+    log_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
