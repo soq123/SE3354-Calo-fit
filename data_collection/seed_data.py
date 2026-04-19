@@ -1,8 +1,9 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'calofit.db')
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), 'schema.sql')
+ROOT = os.path.dirname(os.path.dirname(__file__))
+DB_PATH = os.path.join(ROOT, 'calofit.db')
+SCHEMA_PATH = os.path.join(ROOT, 'schema.sql')
 
 def seed():
     conn = sqlite3.connect(DB_PATH)

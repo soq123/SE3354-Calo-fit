@@ -2,9 +2,13 @@ import sqlite3
 import os
 import sys
 
-TEST_DB = os.path.join(os.path.dirname(__file__), 'test_calofit.db')
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), 'schema.sql')
 
+ROOT = os.path.dirname(os.path.dirname(__file__))
+TEST_DB = os.path.join(os.path.dirname(__file__), 'test_calofit.db')
+SCHEMA_PATH = os.path.join(ROOT, 'schema.sql')
+
+passed = 0
+failed = 0
 passed = 0
 failed = 0
 
