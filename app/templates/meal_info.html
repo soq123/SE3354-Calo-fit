@@ -38,8 +38,6 @@
 <div class="d-flex gap-2">
     <a href="/meals/history" class="btn btn-outline-secondary">Back to History</a>
     <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn btn-primary">Edit</a>
-    <form action="/meals/{{ meal['meal_id'] }}/delete" method="POST" class="d-inline">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this meal?')">Delete</button>
-    </form>
+    <button class="btn btn-danger delete-meal-btn" data-url="/meals/{{ meal['meal_id'] }}/delete">Delete</button>
 </div>
 {% endblock %}

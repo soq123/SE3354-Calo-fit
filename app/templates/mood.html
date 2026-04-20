@@ -13,6 +13,7 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+
 <div class="mb-4">
     <h1 class="page-title mb-1">Mood Tracker</h1>
     <p class="text-muted mb-0">Log how you feel and compare it with your nutrition patterns.</p>
@@ -28,19 +29,19 @@
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Mood</label>
                         <div class="d-flex flex-wrap gap-2">
-                            <input type="radio" class="btn-check" name="mood" id="mood_happy" autocomplete="off">
+                            <input type="radio" class="btn-check" name="mood" id="mood_happy" value="Happy" autocomplete="off">
                             <label class="btn btn-outline-success" for="mood_happy">Happy</label>
 
-                            <input type="radio" class="btn-check" name="mood" id="mood_focused" autocomplete="off">
+                            <input type="radio" class="btn-check" name="mood" id="mood_focused" value="Focused" autocomplete="off">
                             <label class="btn btn-outline-success" for="mood_focused">Focused</label>
 
-                            <input type="radio" class="btn-check" name="mood" id="mood_neutral" autocomplete="off">
+                            <input type="radio" class="btn-check" name="mood" id="mood_neutral" value="Neutral" autocomplete="off">
                             <label class="btn btn-outline-success" for="mood_neutral">Neutral</label>
 
-                            <input type="radio" class="btn-check" name="mood" id="mood_tired" autocomplete="off">
+                            <input type="radio" class="btn-check" name="mood" id="mood_tired" value="Tired" autocomplete="off">
                             <label class="btn btn-outline-success" for="mood_tired">Tired</label>
 
-                            <input type="radio" class="btn-check" name="mood" id="mood_stressed" autocomplete="off">
+                            <input type="radio" class="btn-check" name="mood" id="mood_stressed" value="Stressed" autocomplete="off">
                             <label class="btn btn-outline-success" for="mood_stressed">Stressed</label>
                         </div>
                     </div>
@@ -48,7 +49,7 @@
                     <div class="mb-4">
                         <label for="energy_level" class="form-label fw-semibold">Energy Level</label>
                         <select class="form-select" id="energy_level" name="energy_level">
-                            <option selected disabled>Select energy level</option>
+                            <option selected disabled value="">Select energy level</option>
                             <option value="1">1 - Very low</option>
                             <option value="2">2 - Low</option>
                             <option value="3">3 - Moderate</option>
@@ -58,8 +59,9 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="mood_notes" class="form-label fw-semibold">Notes</label>
-                        <textarea class="form-control" id="mood_notes" name="mood_notes" rows="4" placeholder="Optional notes about sleep, hunger, stress, or how food may be affecting your day"></textarea>
+                        <label for="mood_notes" class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                        <textarea class="form-control" id="mood_notes" name="mood_notes" rows="3"
+                                  placeholder="Sleep, hunger, stress, or how food may be affecting your day"></textarea>
                     </div>
 
                     <div class="d-flex gap-2">
@@ -69,18 +71,46 @@
                 </form>
             </div>
         </div>
+
+        {% if recent_moods %}
+        <div class="card calofit-card mt-4">
+            <div class="card-body">
+                <h5 class="section-title mb-3">Recent Entries</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Mood</th>
+                                <th>Energy</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in recent_moods %}
+                            <tr>
+                                <td class="text-muted small">{{ entry['log_date'] }}</td>
+                                <td class="fw-semibold">{{ entry['mood'] }}</td>
+                                <td>{{ entry['energy_level'] }}/5</td>
+                                <td class="small text-muted">{{ entry['notes'] or '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="col-lg-5">
         <div class="card calofit-card mb-4">
             <div class="card-body">
                 <h4 class="section-title">Nutrition Insight</h4>
-                <p class="mb-2">
-                    Low energy can sometimes line up with low calorie intake, low hydration, or not enough protein across the day.
-                </p>
-                <p class="small text-muted mb-0">
-                    Once mood entries and meals are connected, this section can show smarter personalized insights.
-                </p>
+                {% if latest_mood %}
+                    <p class="mb-1">Today's mood: <strong>{{ latest_mood['mood'] }}</strong> &middot; Energy {{ latest_mood['energy_level'] }}/5</p>
+                {% endif %}
+                <p class="mb-0 small">{{ recommendations['message'] }}</p>
             </div>
         </div>
 
@@ -88,10 +118,9 @@
             <div class="card-body">
                 <h4 class="section-title">Suggested Foods</h4>
                 <ul class="mb-3">
-                    <li>Greek yogurt with fruit</li>
-                    <li>Eggs with toast</li>
-                    <li>Chicken rice bowl</li>
-                    <li>Oatmeal with peanut butter</li>
+                    {% for food in recommendations['foods'] %}
+                        <li>{{ food }}</li>
+                    {% endfor %}
                 </ul>
                 <a href="/foods" class="btn btn-outline-success btn-sm">Search Foods</a>
             </div>

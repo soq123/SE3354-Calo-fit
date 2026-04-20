@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="card calofit-card text-center py-3">
+        <div class="card calofit-card text-center py-3 mb-3">
             {% if calories_remaining <= 0 %}
                 <p class="fs-4 mb-1">✅</p>
                 <p class="fw-semibold text-success mb-0">Goal Met!</p>
@@ -86,6 +86,37 @@
                 <p class="fs-4 mb-1">❌</p>
                 <p class="fw-semibold text-danger mb-0">Goal Not Met Yet</p>
             {% endif %}
+        </div>
+
+        <div class="card calofit-card mb-3">
+            <div class="card-body">
+                <h6 class="section-title mb-2">Today's Mood</h6>
+                {% if latest_mood %}
+                    <p class="mb-1 fw-semibold">{{ latest_mood['mood'] }}</p>
+                    <p class="small text-muted mb-1">Energy: {{ latest_mood['energy_level'] }}/5</p>
+                    {% if latest_mood['notes'] %}
+                        <p class="small text-muted mb-0">{{ latest_mood['notes'] }}</p>
+                    {% endif %}
+                {% else %}
+                    <p class="small text-muted mb-2">No mood logged yet today.</p>
+                    <a href="/mood" class="btn btn-outline-success btn-sm">Log Mood</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card calofit-card">
+            <div class="card-body">
+                <h6 class="section-title mb-2">Nutrition Insights</h6>
+                <p class="small mb-2">{{ recommendations['message'] }}</p>
+                {% if recommendations['foods'] %}
+                    <ul class="small mb-2 ps-3">
+                        {% for food in recommendations['foods'] %}
+                            <li>{{ food }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <a href="/mood" class="btn btn-outline-success btn-sm">Log Mood</a>
+            </div>
         </div>
     </div>
 </div>

@@ -23,11 +23,16 @@
     <div class="col-md-8 col-lg-6">
         <div class="card calofit-card">
             <div class="card-body p-4">
-                <form action="/meals/{{ meal['meal_id'] }}/edit" method="POST">
+                <form id="edit-meal-form" action="/meals/{{ meal['meal_id'] }}/edit">
 
                     <div class="mb-3">
                         <label for="food_name" class="form-label fw-semibold">Food Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="food_name" name="food_name" value="{{ meal['food_name'] }}" required>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="food_name" name="food_name" value="{{ meal['food_name'] }}" required>
+                            <button type="button" class="btn btn-outline-secondary" id="nutrition-lookup-btn">Lookup Nutrition</button>
+                        </div>
+                        <div id="nutrition-feedback" class="small mt-1"></div>
+                        <div id="nutrition-results" class="mt-2"></div>
                     </div>
 
                     <div class="mb-3">

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Register | CaloFit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card calofit-card">
+            <div class="card-body p-4">
+                <h2 class="page-title mb-1">Create account</h2>
+                <p class="text-muted mb-4">Start tracking your nutrition today.</p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form action="/register" method="POST" novalidate>
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               autocomplete="username" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               autocomplete="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               autocomplete="new-password" required minlength="8"
+                               oninput="checkStrength(this.value)">
+                        <div id="strength-bar" class="progress mt-1" style="height:4px;display:none">
+                            <div id="strength-fill" class="progress-bar" style="width:0%"></div>
+                        </div>
+                        <div id="strength-label" class="small mt-1 text-muted"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                               autocomplete="new-password" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="calorie_goal" class="form-label fw-semibold">Daily Calorie Goal</label>
+                        <input type="number" class="form-control" id="calorie_goal" name="calorie_goal"
+                               min="1000" step="50" value="2000">
+                        <div class="form-text">Default is 2000 kcal. You can adjust this later.</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Create Account</button>
+                </form>
+
+                <hr class="my-4">
+                <p class="text-center mb-0 small">
+                    Already have an account? <a href="/login">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function checkStrength(pw) {
+    const bar = document.getElementById("strength-bar");
+    const fill = document.getElementById("strength-fill");
+    const label = document.getElementById("strength-label");
+    bar.style.display = pw.length ? "flex" : "none";
+
+    let score = 0;
+    if (pw.length >= 8)  score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+    const levels = [
+        { pct: 20, cls: "bg-danger",  text: "Very weak" },
+        { pct: 40, cls: "bg-danger",  text: "Weak" },
+        { pct: 60, cls: "bg-warning", text: "Fair" },
+        { pct: 80, cls: "bg-info",    text: "Good" },
+        { pct: 100, cls: "bg-success", text: "Strong" },
+    ];
+    const lvl = levels[Math.min(score, 4)];
+    fill.style.width = lvl.pct + "%";
+    fill.className = "progress-bar " + lvl.cls;
+    label.textContent = lvl.text;
+    label.className = "small mt-1 " + lvl.cls.replace("bg-", "text-");
+}
+</script>
+{% endblock %}

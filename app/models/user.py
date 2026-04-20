@@ -1,39 +1,67 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 from app.db import get_db
 
 
-def create_user(username, email, password, calorie_goal=2000):
-    db = get_db()
-    password_hash = generate_password_hash(password)
-    cursor = db.execute(
-        """INSERT INTO users (username, email, password_hash, calorie_goal)
-           VALUES (?, ?, ?, ?)""",
-        (username, email, password_hash, calorie_goal),
-    )
-    db.commit()
-    return cursor.lastrowid
+class User(UserMixin):
+    """Thin wrapper around a DB row that satisfies Flask-Login's interface."""
+
+    def __init__(self, row):
+        self.id = row["user_id"]
+        self.username = row["username"]
+        self.email = row["email"]
+        self.password_hash = row["password_hash"]
+        self.calorie_goal = row["calorie_goal"]
+        self.email_verified = bool(row["email_verified"])
+
+    def get_id(self):
+        return str(self.id)
 
 
 def get_user_by_id(user_id):
     db = get_db()
     row = db.execute(
-        "SELECT user_id, username, email, password_hash, calorie_goal, created_at FROM users WHERE user_id = ?",
-        (user_id,),
+        "SELECT * FROM users WHERE user_id = ?", (user_id,)
     ).fetchone()
-    return dict(row) if row else None
+    return User(row) if row else None
+
+
+def get_user_by_username(username):
+    db = get_db()
+    row = db.execute(
+        "SELECT * FROM users WHERE LOWER(username) = LOWER(?)", (username,)
+    ).fetchone()
+    return User(row) if row else None
 
 
 def get_user_by_email(email):
     db = get_db()
     row = db.execute(
-        "SELECT user_id, username, email, password_hash, calorie_goal, created_at FROM users WHERE email = ?",
-        (email,),
+        "SELECT * FROM users WHERE LOWER(email) = LOWER(?)", (email,)
     ).fetchone()
-    return dict(row) if row else None
+    return User(row) if row else None
 
 
-def verify_user(email, password):
-    user = get_user_by_email(email)
-    if user and check_password_hash(user["password_hash"], password):
-        return user
-    return None
+def create_user(username, email, password_hash, calorie_goal=2000):
+    db = get_db()
+    cursor = db.execute(
+        "INSERT INTO users (username, email, password_hash, calorie_goal) VALUES (?, ?, ?, ?)",
+        (username, email.lower(), password_hash, calorie_goal),
+    )
+    db.commit()
+    return cursor.lastrowid
+
+
+def verify_user_email(user_id):
+    db = get_db()
+    db.execute(
+        "UPDATE users SET email_verified = 1 WHERE user_id = ?", (user_id,)
+    )
+    db.commit()
+
+
+def update_password(user_id, password_hash):
+    db = get_db()
+    db.execute(
+        "UPDATE users SET password_hash = ? WHERE user_id = ?", (password_hash, user_id)
+    )
+    db.commit()

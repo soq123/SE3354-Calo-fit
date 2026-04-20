@@ -50,9 +50,7 @@
                     <td>{{ meal['fats'] }}g</td>
                     <td>
                         <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                        <form action="/meals/{{ meal['meal_id'] }}/delete" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this meal?')">Delete</button>
-                        </form>
+                        <button class="btn btn-sm btn-outline-danger delete-meal-btn" data-url="/meals/{{ meal['meal_id'] }}/delete">Delete</button>
                     </td>
                 </tr>
                 {% endfor %}

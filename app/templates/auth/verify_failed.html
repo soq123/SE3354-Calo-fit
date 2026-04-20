@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Failed | CaloFit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card calofit-card text-center p-4">
+            <div class="fs-1 mb-3">⚠️</div>
+            <h2 class="page-title mb-2">Link expired or invalid</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <p class="text-muted mb-4">
+                This verification link has expired or is no longer valid.
+                Request a new one below.
+            </p>
+            <form action="/resend-verification" method="GET" class="mb-3">
+                <div class="input-group">
+                    <input type="email" class="form-control" name="email"
+                           placeholder="your@email.com" required>
+                    <button type="submit" class="btn btn-primary">Resend Link</button>
+                </div>
+            </form>
+            <a href="/login" class="btn btn-outline-secondary btn-sm">Back to Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
