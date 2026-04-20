@@ -13,8 +13,12 @@ source venv/bin/activate
 5. Install dependencies in terminal:
 pip install -r requirements.txt
 
-6. If Flask is not installed, run in terminal:
+6a. If Flask is not installed, run in terminal:
 pip install flask
+
+6b. Create a .env file in the project root with at least:
+SECRET_KEY=any-random-string
+(Add MAIL_USERNAME / MAIL_PASSWORD for real email verification, otherwise the link prints to the terminal)
 
 7. Run the application in terminal:
 python run.py
@@ -26,6 +30,10 @@ What it does:
 - Runs the CaloFit web application
 - Automatically creates the database and default user on first startup
 - Allows users to:
+  - Register an account and verify their email
+  - Log in / log out securely
+  - Search USDA nutrition database to autofill meal macros
+  - Track daily mood and energy level
   - Add meals
   - Edit meals
   - Delete meals
