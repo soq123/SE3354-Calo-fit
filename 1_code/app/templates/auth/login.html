@@ -1,53 +1,37 @@
 {% extends "base.html" %}
-
 {% block title %}Login | CaloFit{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-md-5 col-lg-4">
-        <div class="card calofit-card">
-            <div class="card-body p-4">
-                <h2 class="page-title mb-1">Welcome back</h2>
-                <p class="text-muted mb-4">Log in to your CaloFit account.</p>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-logo">CaloFit 🌿</div>
+    <p class="auth-sub">Welcome back! Log in to your account.</p>
 
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message | safe }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                      </div>
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
-
-                <form action="/login" method="POST" novalidate>
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold">Email</label>
-                        <input type="email" class="form-control" id="email" name="email"
-                               autocomplete="email" required autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold">Password</label>
-                        <input type="password" class="form-control" id="password" name="password"
-                               autocomplete="current-password" required>
-                    </div>
-                    <div class="mb-3 d-flex justify-content-between align-items-center">
-                        <div class="form-check mb-0">
-                            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
-                            <label class="form-check-label" for="remember_me">Remember me</label>
-                        </div>
-                        <a href="/forgot-password" class="small">Forgot your password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Log In</button>
-                </form>
-
-                <hr class="my-4">
-                <p class="text-center mb-0 small">
-                    Don't have an account? <a href="/register">Register</a>
-                </p>
-            </div>
+    <form action="/login" method="POST" novalidate>
+      <div class="mb-3">
+        <label class="cf-label" for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email"
+               autocomplete="email" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="cf-label" for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password"
+               autocomplete="current-password" required>
+      </div>
+      <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div class="form-check mb-0">
+          <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+          <label class="form-check-label" for="remember_me" style="font-size:0.88rem;">Remember me</label>
         </div>
-    </div>
+        <a href="/forgot-password" style="font-size:0.85rem;color:var(--green-dark);">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-cf-primary w-100" style="border-radius:12px;padding:0.65rem;font-size:1rem;">Log In</button>
+    </form>
+
+    <hr style="margin:1.5rem 0;border-color:#e8e0d0;">
+    <p style="text-align:center;font-size:0.88rem;color:var(--text-muted);margin:0;">
+      Don't have an account? <a href="/register" style="color:var(--green-dark);font-weight:700;">Register</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

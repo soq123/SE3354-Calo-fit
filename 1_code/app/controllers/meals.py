@@ -1,13 +1,23 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from datetime import date
+from datetime import date, datetime
 from app.models.meal import (
     add_meal, get_meals_by_date, get_daily_total,
-    get_daily_macros, get_remaining_calories, delete_meal, update_meal
+    get_daily_macros, get_remaining_calories, delete_meal, update_meal, get_streak
 )
 from app.models.food_entry import get_all_meals_for_user, get_meal_by_id
 from app.models.mood import get_latest_mood_for_date
 from app.services.insights import generate_recommendations
+
+TIPS = [
+    "Try to include protein in every meal to stay full and build muscle!",
+    "Drinking water before meals can help you avoid overeating.",
+    "Colorful plates mean more nutrients — add a veggie today!",
+    "Eating slowly helps your brain catch up with your stomach.",
+    "A consistent meal schedule can improve your energy levels.",
+    "Healthy snacks like nuts or fruit keep cravings at bay.",
+    "Aim for at least 5 servings of fruits and vegetables daily.",
+]
 
 meals_bp = Blueprint("meals", __name__)
 
@@ -26,6 +36,17 @@ def home():
     recommendations = generate_recommendations(
         macros, calorie_goal, remaining_info["consumed"], latest_mood
     )
+    streak = get_streak(current_user.id)
+    hour = datetime.now().hour
+    if hour < 12:
+        greeting = "Good morning"
+    elif hour < 17:
+        greeting = "Good afternoon"
+    else:
+        greeting = "Good evening"
+    tip = TIPS[date.today().toordinal() % len(TIPS)]
+    meal_types_today = {m['meal_type'] for m in meals}
+    missing_snack = len(meals) > 0 and 'Snack' not in meal_types_today
     return render_template(
         "index.html",
         meals=meals,
@@ -35,7 +56,11 @@ def home():
         calories_remaining=calories_remaining,
         calorie_goal=calorie_goal,
         latest_mood=latest_mood,
-        recommendations=recommendations
+        recommendations=recommendations,
+        streak=streak,
+        greeting=greeting,
+        tip=tip,
+        missing_snack=missing_snack,
     )
 
 

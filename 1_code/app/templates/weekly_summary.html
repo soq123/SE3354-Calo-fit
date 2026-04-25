@@ -1,96 +1,100 @@
 {% extends "base.html" %}
-
 {% block title %}Weekly Summary | CaloFit{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h1 class="page-title mb-1">Weekly Summary</h1>
-    <p class="text-muted mb-0">{{ start_date }} &mdash; {{ end_date }}</p>
+<div class="cf-page-header">
+  <div>
+    <h1>Weekly Summary 📊</h1>
+    <p>{{ start_date }} — {{ end_date }}</p>
+  </div>
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-success">{{ average }}</div>
-            <div class="small text-muted">Avg Daily Calories</div>
-        </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:var(--green-dark);">{{ average }}</div>
+      <div class="lbl">Avg Daily Calories</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-primary">{{ days_logged }}</div>
-            <div class="small text-muted">Days Logged</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#3498db;">{{ days_logged }}</div>
+      <div class="lbl">Days Logged</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-warning">{{ total_meals }}</div>
-            <div class="small text-muted">Total Meals</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#f59b42;">{{ total_meals }}</div>
+      <div class="lbl">Total Meals</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-danger">{{ calorie_goal }}</div>
-            <div class="small text-muted">Daily Goal</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#e74c3c;">{{ calorie_goal }}</div>
+      <div class="lbl">Daily Goal (kcal)</div>
     </div>
+  </div>
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-5 fw-bold">{{ mood_summary['top_mood'] }}</div>
-            <div class="small text-muted">Top Mood This Week</div>
-        </div>
+  <div class="col-6 col-md-4">
+    <div class="cf-stat-pill">
+      <div class="num" style="font-size:1.3rem;">{{ mood_summary['top_mood'] or '—' }}</div>
+      <div class="lbl">Top Mood This Week</div>
     </div>
-    <div class="col-6 col-md-4">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-info">{{ mood_summary['avg_energy'] }}</div>
-            <div class="small text-muted">Avg Energy Level</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-4">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#17a2b8;">{{ mood_summary['avg_energy'] }}</div>
+      <div class="lbl">Avg Energy Level</div>
     </div>
-    <div class="col-6 col-md-4">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-secondary">{{ mood_summary['entries'] }}</div>
-            <div class="small text-muted">Mood Entries</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-4">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:var(--text-mid);">{{ mood_summary['entries'] }}</div>
+      <div class="lbl">Mood Entries</div>
     </div>
+  </div>
 </div>
 
 {% if summary %}
-<div class="card calofit-card">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Date</th>
-                    <th>Calories</th>
-                    <th>Meals Logged</th>
-                    <th>vs Goal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for day in summary %}
-                <tr>
-                    <td>{{ day['log_date'] }}</td>
-                    <td class="fw-semibold">{{ day['total_calories'] }} kcal</td>
-                    <td>{{ day['meal_count'] }}</td>
-                    <td>
-                        {% if day['total_calories'] <= calorie_goal %}
-                            <span class="badge bg-success">On Track</span>
-                        {% else %}
-                            <span class="badge bg-danger">Over Goal</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="cf-card">
+  <div class="table-responsive">
+    <table class="cf-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Calories</th>
+          <th>Meals Logged</th>
+          <th>vs Goal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in summary %}
+        <tr>
+          <td style="color:var(--text-muted);font-size:0.85rem;">{{ day['log_date'] }}</td>
+          <td style="font-weight:700;">{{ day['total_calories'] }} kcal</td>
+          <td>{{ day['meal_count'] }}</td>
+          <td>
+            {% if day['total_calories'] <= calorie_goal %}
+              <span class="pill-success">✓ On Track</span>
+            {% else %}
+              <span class="pill-danger">⚠ Over Goal</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% else %}
-<div class="card calofit-card text-center py-5">
-    <p class="text-muted mb-3">No meals logged this week.</p>
-    <a href="/meals/new" class="btn btn-success">Start Logging</a>
+<div class="cf-card">
+  <div class="cf-empty">
+    <div class="icon">📊</div>
+    <p>No meals logged this week.</p>
+    <a href="/meals/new" class="btn-cf-primary">Start Logging</a>
+  </div>
 </div>
 {% endif %}
 {% endblock %}

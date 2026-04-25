@@ -116,3 +116,30 @@ def update_meal(meal_id, user_id, food_name, calories, protein, carbs, fats, mea
         (food_name, calories, protein, carbs, fats, meal_type, log_date, meal_id, user_id)
     )
     db.commit()
+
+
+def get_streak(user_id):
+    from datetime import date, timedelta
+    db = get_db()
+    rows = db.execute(
+        """SELECT DISTINCT log_date FROM meal_logs
+           WHERE user_id = ?
+           ORDER BY log_date DESC""",
+        (user_id,)
+    ).fetchall()
+    if not rows:
+        return 0
+    dates = [row['log_date'] for row in rows]
+    today = date.today().isoformat()
+    yesterday = (date.today() - timedelta(days=1)).isoformat()
+    if dates[0] not in (today, yesterday):
+        return 0
+    streak = 0
+    check_date = date.fromisoformat(dates[0])
+    for d in dates:
+        if date.fromisoformat(d) == check_date:
+            streak += 1
+            check_date -= timedelta(days=1)
+        else:
+            break
+    return streak

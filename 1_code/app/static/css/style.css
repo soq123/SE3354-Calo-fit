@@ -1,49 +1,731 @@
-.calofit-card {
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    border: none;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --green-dark:   #3d6b50;
+  --green-mid:    #5a8f6e;
+  --green-light:  #d4ead9;
+  --green-pale:   #eef6f0;
+  --cream:        #faf7f0;
+  --cream-dark:   #f0ead8;
+  --card-bg:      #ffffff;
+  --text-dark:    #2d3436;
+  --text-mid:     #4a5568;
+  --text-muted:   #718096;
+  --yellow:       #f5c842;
+  --orange:       #f59b42;
+  --blue-soft:    #a8c4e0;
+  --pink-soft:    #f0b8c8;
+  --shadow-soft:  0 4px 16px rgba(0,0,0,0.07);
+  --shadow-card:  0 2px 12px rgba(0,0,0,0.08);
+  --radius:       16px;
+  --radius-sm:    10px;
 }
 
-.calofit-navbar {
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--cream);
+  color: var(--text-dark);
+  min-height: 100vh;
+  margin: 0;
 }
 
-.section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--green-light); border-radius: 4px; }
+
+/* ── Navbar ──────────────────────────────────────────────────────── */
+.cf-navbar {
+  background: #fff;
+  border-bottom: 1px solid #e8f0ea;
+  padding: 0.6rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.cf-navbar-brand {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.cf-navbar-brand:hover { color: var(--green-mid); }
+
+.cf-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cf-nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.cf-nav-links a:hover,
+.cf-nav-links a.active {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.cf-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cf-username {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn-cf-primary {
+  background: var(--green-dark);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.45rem 1.2rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background 0.18s, transform 0.12s;
+}
+.btn-cf-primary:hover { background: var(--green-mid); color: #fff; transform: translateY(-1px); }
+
+.btn-cf-outline {
+  background: transparent;
+  color: var(--green-dark);
+  border: 2px solid var(--green-dark);
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.18s, color 0.18s;
+}
+.btn-cf-outline:hover { background: var(--green-light); color: var(--green-dark); }
+
+.btn-cf-ghost {
+  background: var(--cream-dark);
+  color: var(--text-mid);
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background 0.18s;
+}
+.btn-cf-ghost:hover { background: #e2d9c6; color: var(--text-dark); }
+
+.btn-cf-danger {
+  background: #fde8e8;
+  color: #c0392b;
+  border: none;
+  border-radius: 20px;
+  padding: 0.35rem 0.9rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.18s;
+}
+.btn-cf-danger:hover { background: #f5c6c6; }
+
+/* ── Add Meal big button ─────────────────────────────────────────── */
+.btn-add-meal {
+  background: var(--green-dark);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.65rem 1.4rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(61,107,80,0.25);
+  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+}
+.btn-add-meal:hover {
+  background: var(--green-mid);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(61,107,80,0.3);
+}
+
+/* ── Cards ───────────────────────────────────────────────────────── */
+.cf-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  border: 1px solid #f0ede6;
+}
+
+/* ── Hero banner ─────────────────────────────────────────────────── */
+.cf-hero {
+  background: linear-gradient(160deg, #c8e6c2 0%, #e8f4d4 60%, #d4ead9 100%);
+  border-radius: var(--radius);
+  padding: 1.6rem 2rem 0;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.cf-hero-text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 0.2rem;
+}
+
+.cf-hero-text p {
+  font-size: 1rem;
+  color: var(--text-mid);
+  margin: 0 0 0.2rem;
+}
+
+.cf-hero-date {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.cf-hero-svg {
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+.cf-sun {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  font-size: 2.2rem;
+  animation: bob 4s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ── Section titles ─────────────────────────────────────────────── */
+.cf-section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Meal type badges ────────────────────────────────────────────── */
+.badge-breakfast { background: #fff3cd; color: #8a6000; }
+.badge-lunch     { background: #d4edda; color: #1e5e35; }
+.badge-dinner    { background: #d1ecf1; color: #0c4a6e; }
+.badge-snack     { background: #fce4ec; color: #8b1a3a; }
+
+.cf-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ── Meal cards ──────────────────────────────────────────────────── */
+.meal-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid #f0ede6;
+  box-shadow: var(--shadow-card);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+  height: 100%;
+}
+.meal-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+.meal-card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.2rem;
+}
+
+.meal-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.meal-card-time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.meal-card-cals {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.meal-card-macros {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.macro-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+.dot-p { background: #5a8f6e; }
+.dot-c { background: #f5c842; }
+.dot-f { background: #f59b42; }
+
+/* ── Progress card ───────────────────────────────────────────────── */
+.cf-progress-bar {
+  height: 12px;
+  background: var(--green-light);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+.cf-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-mid), var(--green-dark));
+  border-radius: 8px;
+  transition: width 0.6s ease;
+}
+.cf-progress-fill.over { background: linear-gradient(90deg, #e67e22, #c0392b); }
+
+.macro-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+.macro-chip .value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+.macro-chip .label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.macro-chip .icon { font-size: 1.1rem; }
+
+/* ── Mascot panel ────────────────────────────────────────────────── */
+.mascot-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.speech-bubble {
+  background: var(--cream);
+  border: 1px solid #e0d8c8;
+  border-radius: 14px 14px 14px 4px;
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.5;
+  flex: 1;
+  position: relative;
+}
+
+.mascot-avatar {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.mascot-placeholder {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  background: var(--green-light);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+}
+
+/* ── Reminder banner ─────────────────────────────────────────────── */
+.cf-reminder {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #78450a;
+}
+.cf-reminder .icon { font-size: 1.4rem; flex-shrink: 0; }
+
+/* ── Tip of the day ──────────────────────────────────────────────── */
+.cf-tip {
+  background: var(--green-pale);
+  border: 1px solid var(--green-light);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+.cf-tip .tip-label {
+  font-weight: 800;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+.cf-tip .icon { font-size: 1.3rem; flex-shrink: 0; }
+
+/* ── Stat mini card ──────────────────────────────────────────────── */
+.cf-stat-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid #f0ede6;
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.cf-stat-card .stat-icon { font-size: 1.8rem; flex-shrink: 0; }
+.cf-stat-card .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+.cf-stat-card .stat-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.1;
+}
+.cf-stat-card .stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── Forms ───────────────────────────────────────────────────────── */
+.cf-form-control {
+  border: 1.5px solid #e0d8c8;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  padding: 0.55rem 0.9rem;
+  color: var(--text-dark);
+  background: var(--cream);
+  width: 100%;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.cf-form-control:focus {
+  outline: none;
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 3px rgba(90,143,110,0.12);
+  background: #fff;
+}
+
+.cf-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────── */
+.cf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cf-table th {
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font-weight: 700;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--green-light);
+}
+.cf-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #f0ede6;
+  color: var(--text-mid);
+  vertical-align: middle;
+}
+.cf-table tr:last-child td { border-bottom: none; }
+.cf-table tr:hover td { background: var(--cream); }
+
+/* ── Alert / flash ───────────────────────────────────────────────── */
+.cf-alert {
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.cf-alert-success { background: #d4edda; color: #1e5e35; border: 1px solid #b8ddc4; }
+.cf-alert-danger  { background: #fde8e8; color: #8b1a1a; border: 1px solid #f5c6c6; }
+.cf-alert-warning { background: #fff3cd; color: #78450a; border: 1px solid #fde68a; }
+.cf-alert-info    { background: #d1ecf1; color: #0c4a6e; border: 1px solid #b8e0ea; }
+
+/* ── Auth pages ──────────────────────────────────────────────────── */
+.auth-wrapper {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid #f0ede6;
+  padding: 2.2rem 2rem;
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-logo {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  margin-bottom: 0.3rem;
+}
+
+.auth-sub {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.6rem;
+}
+
+/* ── Mood buttons ────────────────────────────────────────────────── */
+.mood-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mood-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  border: 2px solid var(--green-light);
+  background: var(--cream);
+  color: var(--text-mid);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.mood-btn:hover,
+input[type="radio"]:checked + .mood-btn {
+  background: var(--green-light);
+  border-color: var(--green-mid);
+  color: var(--green-dark);
+}
+
+/* ── Emoji stat bar (weekly summary) ────────────────────────────── */
+.cf-stat-pill {
+  background: var(--green-pale);
+  border: 1px solid var(--green-light);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.cf-stat-pill .num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+}
+.cf-stat-pill .lbl {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+/* ── On-track badges ─────────────────────────────────────────────── */
+.pill-success { background: #d4edda; color: #1e5e35; border-radius: 12px; padding: 0.2rem 0.65rem; font-size: 0.78rem; font-weight: 700; }
+.pill-danger  { background: #fde8e8; color: #8b1a1a; border-radius: 12px; padding: 0.2rem 0.65rem; font-size: 0.78rem; font-weight: 700; }
+
+/* ── Empty state ─────────────────────────────────────────────────── */
+.cf-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+.cf-empty .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+.cf-empty p { font-size: 0.95rem; font-weight: 600; }
+
+/* ── Page header ─────────────────────────────────────────────────── */
+.cf-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.cf-page-header h1 {
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin: 0 0 0.2rem;
+  color: var(--text-dark);
+}
+.cf-page-header p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+.cf-main { padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+@media (max-width: 768px) {
+  .cf-main { padding: 1rem; }
+  .cf-hero-text h1 { font-size: 1.5rem; }
+  .cf-navbar { padding: 0.5rem 1rem; }
+  .cf-nav-links { display: none; }
+}
+
+/* ── Bootstrap override helpers ──────────────────────────────────── */
+.form-control, .form-select {
+  font-family: 'Nunito', sans-serif;
+  border-radius: 10px;
+  border: 1.5px solid #e0d8c8;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 0.92rem;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 3px rgba(90,143,110,0.12);
+  background: #fff;
+}
+
+.btn-success {
+  background-color: var(--green-dark) !important;
+  border-color: var(--green-dark) !important;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  border-radius: 20px;
+}
+.btn-success:hover {
+  background-color: var(--green-mid) !important;
+  border-color: var(--green-mid) !important;
+}
+
+.btn-outline-secondary, .btn-outline-primary, .btn-primary, .btn-danger {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+.calofit-card, .card {
+  border-radius: var(--radius);
+  border: 1px solid #f0ede6;
+  box-shadow: var(--shadow-card);
 }
 
 .page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #222;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--text-dark);
 }
 
-/* Background gradient similar to your design */
-.dashboard-bg {
-    background: linear-gradient(to right, #c1e1c1, #9fb9e6);
-    min-height: 100vh;
+.section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dark);
 }
 
-/* Meal card styling */
-.meal-card {
-    border-radius: 10px;
-    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-}
-
-/* Totals section */
-.totals-box {
-    padding: 20px;
-    border-radius: 10px;
-    background: transparent;
-}
-.totals-box h3 {
-    font-weight: bold;
-}
-.totals-box h4 {
-    margin-top: 10px;
-}
-.totals-box h5 {
-    margin-top: 10px;
-}
+/* Progress bar */
+.progress { border-radius: 8px; background: var(--green-light); }
+.progress-bar { border-radius: 8px; }

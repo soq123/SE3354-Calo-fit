@@ -1,84 +1,74 @@
 {% extends "base.html" %}
-
 {% block title %}Add Meal | CaloFit{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h1 class="page-title mb-1">Add a New Meal</h1>
-    <p class="text-muted mb-0">Enter the meal information below.</p>
+<div class="cf-page-header">
+  <div>
+    <h1>Add a New Meal 🍴</h1>
+    <p>Enter the meal information below.</p>
+  </div>
+  <a href="/" class="btn-cf-ghost">← Back</a>
 </div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card calofit-card">
-            <div class="card-body p-4">
-                <form action="/meals/new" method="POST">
+  <div class="col-md-8 col-lg-6">
+    <div class="cf-card p-4">
+      <form action="/meals/new" method="POST">
 
-                    <div class="mb-3">
-                        <label for="food_name" class="form-label fw-semibold">Food Name <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="food_name" name="food_name" placeholder="e.g. chicken thigh boneless skinless raw" required>
-                            <button type="button" class="btn btn-outline-secondary" id="nutrition-lookup-btn">Lookup Nutrition</button>
-                        </div>
-                        <div id="nutrition-feedback" class="small mt-1"></div>
-                        <div id="nutrition-results" class="mt-2"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="meal_type" class="form-label fw-semibold">Meal Type <span class="text-danger">*</span></label>
-                        <select class="form-select" id="meal_type" name="meal_type" required>
-                            <option selected disabled value="">Select type</option>
-                            <option value="Breakfast">Breakfast</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Dinner">Dinner</option>
-                            <option value="Snack">Snack</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="log_date" class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="calories" class="form-label fw-semibold">Calories (kcal) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="calories" name="calories" min="0" placeholder="e.g. 500" autocomplete="off" required>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="protein" class="form-label fw-semibold">Protein (g)</label>
-                            <input type="number" step="0.1" class="form-control" id="protein" name="protein" min="0" value="0" autocomplete="off">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="carbs" class="form-label fw-semibold">Carbs (g)</label>
-                            <input type="number" step="0.1" class="form-control" id="carbs" name="carbs" min="0" value="0" autocomplete="off">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="fats" class="form-label fw-semibold">Fats (g)</label>
-                            <input type="number" step="0.1" class="form-control" id="fats" name="fats" min="0" value="0" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between mt-2">
-                        <a href="/" class="btn btn-outline-secondary">Back</a>
-                        <button type="submit" class="btn btn-success">Save Meal</button>
-                    </div>
-
-                </form>
-            </div>
+        <div class="mb-3">
+          <label class="cf-label">Food Name <span style="color:#e74c3c;">*</span></label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="food_name" name="food_name"
+                   placeholder="e.g. chicken breast, oatmeal, apple" required>
+            <button type="button" class="btn btn-outline-secondary" id="nutrition-lookup-btn">🔍 Lookup</button>
+          </div>
+          <div id="nutrition-feedback" class="small mt-1"></div>
+          <div id="nutrition-results" class="mt-2"></div>
         </div>
+
+        <div class="mb-3">
+          <label class="cf-label">Meal Type <span style="color:#e74c3c;">*</span></label>
+          <select class="form-select" id="meal_type" name="meal_type" required>
+            <option selected disabled value="">Select type</option>
+            <option value="Breakfast">☀️ Breakfast</option>
+            <option value="Lunch">🥗 Lunch</option>
+            <option value="Dinner">🍽️ Dinner</option>
+            <option value="Snack">🍎 Snack</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="cf-label">Date <span style="color:#e74c3c;">*</span></label>
+          <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="cf-label">Calories (kcal) <span style="color:#e74c3c;">*</span></label>
+          <input type="number" class="form-control" id="calories" name="calories" min="0"
+                 placeholder="e.g. 500" autocomplete="off" required>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Protein (g)</label>
+            <input type="number" step="0.1" class="form-control" id="protein" name="protein" min="0" value="0" autocomplete="off">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Carbs (g)</label>
+            <input type="number" step="0.1" class="form-control" id="carbs" name="carbs" min="0" value="0" autocomplete="off">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Fats (g)</label>
+            <input type="number" step="0.1" class="form-control" id="fats" name="fats" min="0" value="0" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-2">
+          <button type="submit" class="btn-cf-primary" style="padding:0.55rem 1.5rem;">Save Meal ✓</button>
+        </div>
+
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}

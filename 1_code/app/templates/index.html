@@ -1,123 +1,202 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard | CaloFit{% endblock %}
 
 {% block content %}
-<div class="mb-4 d-flex justify-content-between align-items-center">
-    <div>
-        <h1 class="page-title mb-1">Today's Dashboard</h1>
-        <p class="text-muted mb-0">{{ today }}</p>
-    </div>
-    <a href="/meals/new" class="btn btn-success">+ Add Meal</a>
+
+{# ── Hero Banner ────────────────────────────────────────────────── #}
+<div class="cf-hero">
+  <span class="cf-sun">☀️</span>
+  <div class="cf-hero-text">
+    <h1>{{ greeting }}!</h1>
+    <p>Here's your progress for today.</p>
+    <div class="cf-hero-date">📅 {{ today }}</div>
+  </div>
+  <svg class="cf-hero-svg" viewBox="0 0 900 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="120" cy="100" rx="180" ry="90" fill="#b5d4b0"/>
+    <ellipse cx="420" cy="110" rx="220" ry="80" fill="#c8e6c2"/>
+    <ellipse cx="750" cy="105" rx="200" ry="85" fill="#b5d4b0"/>
+    <ellipse cx="900" cy="110" rx="150" ry="75" fill="#c8e6c2"/>
+  </svg>
 </div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
+{# ── Two-column layout ──────────────────────────────────────────── #}
 <div class="row g-4">
-    <div class="col-lg-8">
-        <h5 class="section-title mb-3">Meals Today</h5>
-        {% if meals %}
-        <div class="row g-3">
-            {% for meal in meals %}
-            <div class="col-md-4">
-                <div class="card calofit-card h-100">
-                    <div class="card-header bg-transparent fw-semibold">{{ meal['meal_type'] }}</div>
-                    <div class="card-body text-center">
-                        <h6 class="fw-bold">{{ meal['food_name'] }}</h6>
-                        <p class="small mb-1 text-muted">{{ meal['log_time'] }}</p>
-                        <p class="small mb-1"><strong>{{ meal['calories'] }}</strong> kcal</p>
-                        <p class="small mb-1">P: {{ meal['protein'] }}g &nbsp; C: {{ meal['carbs'] }}g &nbsp; F: {{ meal['fats'] }}g</p>
-                        <a href="/meals/{{ meal['meal_id'] }}" class="btn btn-outline-secondary btn-sm mt-2">View</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+
+  {# ── LEFT: Meals + banners ──────────────────────────────────────── #}
+  <div class="col-lg-8">
+
+    <div class="cf-section-title">🍽️ Meals Today</div>
+
+    {% if meals %}
+    <div class="row g-3 mb-3">
+      {% for meal in meals %}
+      {% set mt = meal['meal_type'] %}
+      {% if mt == 'Breakfast' %}
+        {% set icon = '☀️' %}{% set badge_cls = 'badge-breakfast' %}
+      {% elif mt == 'Lunch' %}
+        {% set icon = '🥗' %}{% set badge_cls = 'badge-lunch' %}
+      {% elif mt == 'Dinner' %}
+        {% set icon = '🍽️' %}{% set badge_cls = 'badge-dinner' %}
+      {% else %}
+        {% set icon = '🍎' %}{% set badge_cls = 'badge-snack' %}
+      {% endif %}
+      <div class="col-md-4">
+        <div class="meal-card">
+          <div>
+            <span class="cf-badge {{ badge_cls }}">{{ mt }}</span>
+          </div>
+          <div class="meal-card-icon">{{ icon }}</div>
+          <div class="meal-card-name">{{ meal['food_name'] }}</div>
+          <div class="meal-card-time">🕐 {{ meal['log_time'] }}</div>
+          <div class="meal-card-cals">{{ meal['calories'] }} kcal</div>
+          <div class="meal-card-macros">
+            <span><span class="macro-dot dot-p"></span>P: {{ meal['protein'] }}g</span>
+            <span><span class="macro-dot dot-c"></span>C: {{ meal['carbs'] }}g</span>
+            <span><span class="macro-dot dot-f"></span>F: {{ meal['fats'] }}g</span>
+          </div>
+          <div class="mt-auto pt-2">
+            <a href="/meals/{{ meal['meal_id'] }}" class="btn-cf-outline" style="width:100%;justify-content:center;">View Meal</a>
+          </div>
         </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="cf-card mb-3">
+      <div class="cf-empty">
+        <div class="icon">🥗</div>
+        <p>No meals logged yet today.</p>
+        <a href="/meals/new" class="btn-cf-primary">Log Your First Meal</a>
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Reminder ─────────────────────────────────────────────────── #}
+    {% if missing_snack %}
+    <div class="cf-reminder mb-3">
+      <span class="icon">🔔</span>
+      <div>
+        <strong>Reminder:</strong> You haven't logged a snack yet today.<br>
+        <span style="font-weight:500;">Snacks can help you stay energized and avoid overeating later!</span>
+      </div>
+      <span style="margin-left:auto;font-size:1.6rem;">🌱</span>
+    </div>
+    {% elif not meals %}
+    <div class="cf-reminder mb-3">
+      <span class="icon">🔔</span>
+      <div>
+        <strong>Reminder:</strong> You haven't logged any meals yet today.<br>
+        <span style="font-weight:500;">Don't forget to fuel your body!</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Tip of the Day ───────────────────────────────────────────── #}
+    <div class="cf-tip">
+      <span class="icon">💡</span>
+      <div>
+        <span class="tip-label">Tip of the day</span>
+        {{ tip }}
+      </div>
+      <span style="margin-left:auto;font-size:2rem;">🥦</span>
+    </div>
+
+  </div>
+
+  {# ── RIGHT: Progress + mascot + stats ───────────────────────────── #}
+  <div class="col-lg-4">
+
+    {# Add Meal button #}
+    <a href="/meals/new" class="btn-add-meal mb-3">✨ + Add Meal</a>
+
+    {# Today's Progress #}
+    {% set pct = [((total_calories / calorie_goal) * 100) | int, 100] | min if calorie_goal else 0 %}
+    <div class="cf-card p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="cf-section-title" style="margin-bottom:0;">⚡ Today's Progress</span>
+        <span style="font-size:1.3rem;">⭐</span>
+      </div>
+      <div style="font-size:2rem;font-weight:800;color:var(--text-dark);line-height:1.1;">
+        {{ total_calories }} <span style="font-size:1rem;font-weight:600;color:var(--text-muted);">/ {{ calorie_goal }} kcal</span>
+      </div>
+      <div class="cf-progress-bar">
+        <div class="cf-progress-fill {% if calories_remaining < 0 %}over{% endif %}" style="width:{{ pct }}%"></div>
+      </div>
+      <div style="font-size:0.85rem;font-weight:700;color:var(--text-muted);margin-bottom:0.75rem;">
+        {% if calories_remaining >= 0 %}
+          {{ calories_remaining }} kcal remaining
         {% else %}
-        <div class="card calofit-card text-center py-5">
-            <p class="text-muted mb-3">No meals logged yet today.</p>
-            <a href="/meals/new" class="btn btn-success">Log Your First Meal</a>
-        </div>
+          {{ (calories_remaining * -1) }} kcal over goal
         {% endif %}
+      </div>
+      <div class="d-flex justify-content-around">
+        <div class="macro-chip">
+          <span class="icon">💪</span>
+          <span class="value">{{ macros['total_protein'] | round(1) }}g</span>
+          <span class="label">Protein</span>
+        </div>
+        <div class="macro-chip">
+          <span class="icon">🌾</span>
+          <span class="value">{{ macros['total_carbs'] | round(1) }}g</span>
+          <span class="label">Carbs</span>
+        </div>
+        <div class="macro-chip">
+          <span class="icon">💧</span>
+          <span class="value">{{ macros['total_fats'] | round(1) }}g</span>
+          <span class="label">Fats</span>
+        </div>
+      </div>
     </div>
 
-    <div class="col-lg-4">
-        <div class="card calofit-card mb-3">
-            <div class="card-body text-center">
-                <h5 class="section-title">Today's Totals</h5>
-                <h2 class="fw-bold mt-2">{{ total_calories }} <small class="fs-6 text-muted">/ {{ calorie_goal }} kcal</small></h2>
-                <div class="progress mt-2 mb-3" style="height: 10px;">
-                    {% set pct = [((total_calories / calorie_goal) * 100) | int, 100] | min if calorie_goal else 0 %}
-                    <div class="progress-bar bg-success" style="width: {{ pct }}%"></div>
-                </div>
-                <p class="mb-1"><strong>{{ calories_remaining }}</strong> kcal remaining</p>
-                <hr>
-                <div class="d-flex justify-content-around text-center">
-                    <div>
-                        <div class="fw-bold">{{ macros['total_protein'] | round(1) }}g</div>
-                        <div class="small text-muted">Protein</div>
-                    </div>
-                    <div>
-                        <div class="fw-bold">{{ macros['total_carbs'] | round(1) }}g</div>
-                        <div class="small text-muted">Carbs</div>
-                    </div>
-                    <div>
-                        <div class="fw-bold">{{ macros['total_fats'] | round(1) }}g</div>
-                        <div class="small text-muted">Fats</div>
-                    </div>
-                </div>
-            </div>
+    {# Mascot Panel #}
+    <div class="cf-card mb-3" style="overflow:hidden;">
+      <div class="mascot-panel">
+        <div class="speech-bubble">
+          {% if not meals %}
+            You haven't logged any meals yet today. Don't forget to fuel your body! 🍽️
+          {% elif calories_remaining < 0 %}
+            You went over your goal today — {{ (calories_remaining * -1) }} kcal over. No worries, try again tomorrow! 💪
+          {% elif calories_remaining <= 150 %}
+            You did great today! You're almost at your calorie goal. Just {{ calories_remaining }} kcal left! Keep it up! 💪
+          {% elif pct >= 50 %}
+            Great progress! You're {{ pct }}% through your daily goal. Keep going! 🌟
+          {% else %}
+            You still have {{ calories_remaining }} kcal left today. Keep logging your meals to hit your goal! 🥗
+          {% endif %}
+          {% if latest_mood and latest_mood['mood'] in ['Tired', 'Stressed'] %}
+            <br><br>Your mood seems low today. Try a balanced meal and take care of yourself. 💚
+          {% endif %}
         </div>
-
-        <div class="card calofit-card text-center py-3 mb-3">
-            {% if calories_remaining <= 0 %}
-                <p class="fs-4 mb-1">✅</p>
-                <p class="fw-semibold text-success mb-0">Goal Met!</p>
-            {% else %}
-                <p class="fs-4 mb-1">❌</p>
-                <p class="fw-semibold text-danger mb-0">Goal Not Met Yet</p>
-            {% endif %}
-        </div>
-
-        <div class="card calofit-card mb-3">
-            <div class="card-body">
-                <h6 class="section-title mb-2">Today's Mood</h6>
-                {% if latest_mood %}
-                    <p class="mb-1 fw-semibold">{{ latest_mood['mood'] }}</p>
-                    <p class="small text-muted mb-1">Energy: {{ latest_mood['energy_level'] }}/5</p>
-                    {% if latest_mood['notes'] %}
-                        <p class="small text-muted mb-0">{{ latest_mood['notes'] }}</p>
-                    {% endif %}
-                {% else %}
-                    <p class="small text-muted mb-2">No mood logged yet today.</p>
-                    <a href="/mood" class="btn btn-outline-success btn-sm">Log Mood</a>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="card calofit-card">
-            <div class="card-body">
-                <h6 class="section-title mb-2">Nutrition Insights</h6>
-                <p class="small mb-2">{{ recommendations['message'] }}</p>
-                {% if recommendations['foods'] %}
-                    <ul class="small mb-2 ps-3">
-                        {% for food in recommendations['foods'] %}
-                            <li>{{ food }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-                <a href="/mood" class="btn btn-outline-success btn-sm">Log Mood</a>
-            </div>
-        </div>
+        <div class="mascot-placeholder">🧑</div>
+      </div>
     </div>
+
+    {# Daily Goal #}
+    <div class="cf-stat-card mb-3">
+      <span class="stat-icon">🎯</span>
+      <div style="flex:1;">
+        <div class="stat-label">Daily Goal</div>
+        <div class="stat-value">{{ calorie_goal }} kcal</div>
+      </div>
+      <a href="/register" class="btn-cf-outline" style="white-space:nowrap;">Edit Goal</a>
+    </div>
+
+    {# Streak #}
+    <div class="cf-stat-card">
+      <span class="stat-icon">🔥</span>
+      <div>
+        <div class="stat-label">Streak</div>
+        <div class="stat-value">{{ streak }} day{% if streak != 1 %}s{% endif %}</div>
+        <div class="stat-sub">
+          {% if streak == 0 %}Start logging to build your streak!
+          {% elif streak == 1 %}Great start — keep it going!
+          {% elif streak < 5 %}Nice work staying consistent!
+          {% else %}Great job staying consistent! 🌟{% endif %}
+        </div>
+      </div>
+      <span style="margin-left:auto;font-size:2rem;">🪴</span>
+    </div>
+
+  </div>
 </div>
 {% endblock %}

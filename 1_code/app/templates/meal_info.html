@@ -1,43 +1,48 @@
 {% extends "base.html" %}
-
 {% block title %}{{ meal['food_name'] }} | CaloFit{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h1 class="page-title mb-1">{{ meal['food_name'] }}</h1>
-    <p class="text-muted mb-0">{{ meal['meal_type'] }} &mdash; {{ meal['log_date'] }}</p>
+<div class="cf-page-header">
+  <div>
+    <h1>{{ meal['food_name'] }}</h1>
+    <p>
+      {% set mt = meal['meal_type'] %}
+      {% if mt == 'Breakfast' %}☀️{% elif mt == 'Lunch' %}🥗{% elif mt == 'Dinner' %}🍽️{% else %}🍎{% endif %}
+      {{ meal['meal_type'] }} — {{ meal['log_date'] }}
+    </p>
+  </div>
+  <a href="/meals/history" class="btn-cf-ghost">← History</a>
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-success">{{ meal['calories'] }}</div>
-            <div class="small text-muted">Calories (kcal)</div>
-        </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:var(--green-dark);">{{ meal['calories'] }}</div>
+      <div class="lbl">Calories (kcal)</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-primary">{{ meal['protein'] }}g</div>
-            <div class="small text-muted">Protein</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#3498db;">{{ meal['protein'] }}g</div>
+      <div class="lbl">Protein</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-warning">{{ meal['carbs'] }}g</div>
-            <div class="small text-muted">Carbs</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#f5c842;">{{ meal['carbs'] }}g</div>
+      <div class="lbl">Carbs</div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card calofit-card text-center py-3">
-            <div class="fs-3 fw-bold text-danger">{{ meal['fats'] }}g</div>
-            <div class="small text-muted">Fats</div>
-        </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="cf-stat-pill">
+      <div class="num" style="color:#f59b42;">{{ meal['fats'] }}g</div>
+      <div class="lbl">Fats</div>
     </div>
+  </div>
 </div>
 
 <div class="d-flex gap-2">
-    <a href="/meals/history" class="btn btn-outline-secondary">Back to History</a>
-    <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn btn-primary">Edit</a>
-    <button class="btn btn-danger delete-meal-btn" data-url="/meals/{{ meal['meal_id'] }}/delete">Delete</button>
+  <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn-cf-outline">✏️ Edit Meal</a>
+  <button class="btn-cf-danger delete-meal-btn" data-url="/meals/{{ meal['meal_id'] }}/delete">🗑️ Delete</button>
 </div>
 {% endblock %}
