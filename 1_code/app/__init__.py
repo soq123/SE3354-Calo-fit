@@ -32,11 +32,13 @@ def create_app():
     from app.controllers.foods import foods_bp
     from app.controllers.analytics import analytics_bp
     from app.controllers.mood import mood_bp
+    from app.controllers.favorites import fav_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(meals_bp)
     app.register_blueprint(foods_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(mood_bp)
+    app.register_blueprint(fav_bp)
 
     return app

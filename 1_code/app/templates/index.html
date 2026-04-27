@@ -202,7 +202,7 @@
     </div>
 
     {# Streak #}
-    <div class="cf-stat-card">
+    <div class="cf-stat-card mb-3">
       <span class="stat-icon">🔥</span>
       <div>
         <div class="stat-label">Streak</div>
@@ -217,6 +217,83 @@
       <span style="margin-left:auto;font-size:2rem;">🪴</span>
     </div>
 
+    {# Meal Type Limits #}
+    <div class="cf-card p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="cf-section-title" style="margin-bottom:0;">⏱ Meal Type Limits</span>
+        <button class="btn-cf-outline" style="font-size:0.78rem;padding:0.25rem 0.7rem;"
+                data-bs-toggle="modal" data-bs-target="#limitsModal">Set Limits</button>
+      </div>
+      {% for mt, img in [('Breakfast','breakfast.png'),('Lunch','lunch.png'),('Dinner','dinner.png'),('Snack','snack.png')] %}
+        {% set lim = limits[mt] %}
+        {% set tot = type_totals[mt] %}
+        {% set over = lim > 0 and tot > lim %}
+        <div class="limit-row {% if not loop.last %}mb-2{% endif %}">
+          <img src="{{ url_for('static', filename=img) }}" class="limit-icon" alt="{{ mt }}">
+          <div class="limit-info">
+            <div class="d-flex justify-content-between">
+              <span class="limit-name">{{ mt }}</span>
+              <span class="limit-nums {% if over %}text-danger fw-bold{% endif %}">
+                {{ tot }} {% if lim > 0 %}/ {{ lim }} kcal{% else %}kcal{% endif %}
+              </span>
+            </div>
+            <div class="limit-bar-track">
+              {% if lim > 0 %}
+                {% set pct_l = [((tot / lim) * 100) | int, 100] | min %}
+                <div class="limit-bar-fill {% if over %}over{% endif %}" style="width:{{ pct_l }}%"></div>
+              {% else %}
+                <div class="limit-bar-fill" style="width:0%;opacity:0.3;"></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
   </div>
 </div>
+
+{# Set Limits Modal #}
+<div class="modal fade" id="limitsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:1.2rem;border:none;box-shadow:0 8px 40px rgba(0,0,0,.12);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" style="color:var(--text-dark);">⏱ Meal Type Limits</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="text-muted small mb-3">Set a calorie cap for each meal type. Use 0 to remove a limit.</p>
+        {% for mt, img in [('Breakfast','breakfast.png'),('Lunch','lunch.png'),('Dinner','dinner.png'),('Snack','snack.png')] %}
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <img src="{{ url_for('static', filename=img) }}" style="width:32px;height:32px;object-fit:contain;" alt="{{ mt }}">
+          <span class="fw-semibold flex-grow-1">{{ mt }}</span>
+          <input type="number" class="form-control limit-modal-input" data-type="{{ mt }}"
+                 value="{{ limits[mt] }}" min="0" step="1"
+                 style="max-width:105px;border-radius:0.7rem;" placeholder="0">
+          <span class="text-muted small">kcal</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button class="btn-cf-primary" id="saveLimitsBtn" style="width:100%;">Save Limits</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('saveLimitsBtn')?.addEventListener('click', () => {
+  const data = {};
+  document.querySelectorAll('.limit-modal-input').forEach(inp => {
+    data[inp.dataset.type] = parseInt(inp.value) || 0;
+  });
+  fetch('/api/limits', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(d => { if (d.status === 'ok') location.reload(); });
+});
+</script>
 {% endblock %}

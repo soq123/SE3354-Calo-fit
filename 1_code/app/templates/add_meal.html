@@ -12,6 +12,22 @@
 
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
+
+    {# ── Favourites quick-log panel ── #}
+    <div class="cf-card p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center"
+           style="cursor:pointer;user-select:none;"
+           data-bs-toggle="collapse" data-bs-target="#favList" aria-expanded="false">
+        <span class="fw-bold" style="color:var(--text-dark);">⭐ Quick Log from Favourites</span>
+        <span class="text-muted small">tap to expand</span>
+      </div>
+      <div class="collapse" id="favList">
+        <div id="fav-items" class="mt-2">
+          <p class="text-muted small text-center py-1 mb-0">Loading…</p>
+        </div>
+      </div>
+    </div>
+
     <div class="cf-card p-4">
       <form action="/meals/new" method="POST">
 
@@ -90,6 +106,7 @@
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-2">
+          <button type="button" id="saveFavBtn" class="btn-cf-outline" style="padding:0.55rem 1rem;">⭐ Save to Favourites</button>
           <button type="submit" class="btn-cf-primary" style="padding:0.55rem 1.5rem;">Save Meal ✓</button>
         </div>
 
@@ -97,4 +114,89 @@
     </div>
   </div>
 </div>
+
+<script>
+(function () {
+  let favsLoaded = false;
+
+  function renderFavs(favs) {
+    const el = document.getElementById('fav-items');
+    if (!favs.length) {
+      el.innerHTML = '<p class="text-muted small text-center py-1 mb-0">No favourites yet — save a meal to get started!</p>';
+      return;
+    }
+    el.innerHTML = favs.map(f => `
+      <div class="fav-card d-flex align-items-center gap-2 mb-2" data-id="${f.fav_id}">
+        <div class="flex-grow-1" style="min-width:0;">
+          <div class="fw-semibold" style="font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.food_name}</div>
+          <div class="text-muted" style="font-size:0.76rem;">${f.calories} kcal${f.meal_type ? ' · ' + f.meal_type : ''}</div>
+        </div>
+        <button class="btn-cf-outline fav-log-btn" style="font-size:0.76rem;padding:0.2rem 0.6rem;white-space:nowrap;"
+                data-fav='${JSON.stringify(f).replace(/'/g,"&#39;")}'>Quick Log</button>
+        <button class="fav-del-btn" style="background:none;border:none;color:#e74c3c;font-size:1rem;padding:0.1rem 0.3rem;cursor:pointer;" title="Remove">✕</button>
+      </div>`).join('');
+
+    document.querySelectorAll('.fav-log-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = JSON.parse(btn.dataset.fav);
+        document.getElementById('food_name').value = f.food_name;
+        document.getElementById('calories').value = f.calories;
+        document.getElementById('protein').value = f.protein;
+        document.getElementById('carbs').value = f.carbs;
+        document.getElementById('fats').value = f.fats;
+        document.getElementById('iron').value = f.iron;
+        document.getElementById('zinc').value = f.zinc;
+        document.getElementById('calcium').value = f.calcium;
+        if (f.meal_type) {
+          const radio = document.querySelector(`input[name="meal_type"][value="${f.meal_type}"]`);
+          if (radio) radio.checked = true;
+        }
+        bootstrap.Collapse.getOrCreateInstance(document.getElementById('favList')).hide();
+      });
+    });
+
+    document.querySelectorAll('.fav-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.fav-card');
+        fetch(`/api/favorites/${card.dataset.id}`, { method: 'DELETE' })
+          .then(() => card.remove());
+      });
+    });
+  }
+
+  document.getElementById('favList')?.addEventListener('show.bs.collapse', () => {
+    if (favsLoaded) return;
+    fetch('/api/favorites').then(r => r.json()).then(favs => { favsLoaded = true; renderFavs(favs); });
+  });
+
+  document.getElementById('saveFavBtn')?.addEventListener('click', () => {
+    const foodName = document.getElementById('food_name').value.trim();
+    if (!foodName) { alert('Please enter a food name first.'); return; }
+    const data = {
+      food_name: foodName,
+      calories: parseFloat(document.getElementById('calories').value) || 0,
+      protein:  parseFloat(document.getElementById('protein').value)  || 0,
+      carbs:    parseFloat(document.getElementById('carbs').value)    || 0,
+      fats:     parseFloat(document.getElementById('fats').value)     || 0,
+      iron:     parseFloat(document.getElementById('iron').value)     || 0,
+      zinc:     parseFloat(document.getElementById('zinc').value)     || 0,
+      calcium:  parseFloat(document.getElementById('calcium').value)  || 0,
+      meal_type: document.querySelector('input[name="meal_type"]:checked')?.value || null,
+    };
+    fetch('/api/favorites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(r => r.json()).then(d => {
+      if (d.status === 'ok') {
+        const btn = document.getElementById('saveFavBtn');
+        btn.textContent = '✓ Saved!';
+        btn.disabled = true;
+        favsLoaded = false;
+        setTimeout(() => { btn.textContent = '⭐ Save to Favourites'; btn.disabled = false; }, 2000);
+      }
+    });
+  });
+})();
+</script>
 {% endblock %}

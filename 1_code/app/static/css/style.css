@@ -446,6 +446,56 @@ body {
 }
 .micro-chip .icon { font-size: 1rem; }
 
+/* ── Meal-type limit rows ────────────────────────────────────────── */
+.limit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.limit-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.limit-info {
+  flex: 1;
+  min-width: 0;
+}
+.limit-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.limit-nums {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.limit-bar-track {
+  height: 5px;
+  background: #e8e0d0;
+  border-radius: 99px;
+  margin-top: 3px;
+  overflow: hidden;
+}
+.limit-bar-fill {
+  height: 100%;
+  background: var(--green-dark);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+.limit-bar-fill.over {
+  background: #e74c3c;
+}
+
+/* ── Favourite cards (add_meal panel) ───────────────────────────── */
+.fav-card {
+  background: var(--cream);
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.6rem;
+}
+
 /* ── Mascot panel ────────────────────────────────────────────────── */
 .mascot-panel {
   display: flex;

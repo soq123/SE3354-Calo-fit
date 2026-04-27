@@ -7,6 +7,7 @@ from app.models.meal import (
 )
 from app.models.food_entry import get_all_meals_for_user, get_meal_by_id
 from app.models.mood import get_latest_mood_for_date
+from app.models.meal_limit import get_limits, get_meal_type_totals
 from app.services.insights import generate_recommendations
 
 TIPS = [
@@ -37,6 +38,8 @@ def home():
         macros, calorie_goal, remaining_info["consumed"], latest_mood
     )
     streak = get_streak(current_user.id)
+    limits = get_limits(current_user.id)
+    type_totals = get_meal_type_totals(current_user.id, today)
     hour = datetime.now().hour
     if hour < 12:
         greeting = "Good morning"
@@ -61,6 +64,8 @@ def home():
         greeting=greeting,
         tip=tip,
         missing_snack=missing_snack,
+        limits=limits,
+        type_totals=type_totals,
     )
 
 

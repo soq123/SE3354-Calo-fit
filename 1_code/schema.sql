@@ -31,6 +31,29 @@ CREATE TABLE meal_logs (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS meal_type_limits (
+    limit_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id       INTEGER NOT NULL REFERENCES users(user_id),
+    meal_type     TEXT    NOT NULL CHECK(meal_type IN ('Breakfast','Lunch','Dinner','Snack')),
+    calorie_limit INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(user_id, meal_type)
+);
+
+CREATE TABLE IF NOT EXISTS favorites (
+    fav_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(user_id),
+    food_name   TEXT    NOT NULL,
+    calories    REAL    NOT NULL DEFAULT 0,
+    protein     REAL    NOT NULL DEFAULT 0,
+    carbs       REAL    NOT NULL DEFAULT 0,
+    fats        REAL    NOT NULL DEFAULT 0,
+    iron        REAL    NOT NULL DEFAULT 0,
+    zinc        REAL    NOT NULL DEFAULT 0,
+    calcium     REAL    NOT NULL DEFAULT 0,
+    meal_type   TEXT    DEFAULT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE mood_logs (
     mood_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,

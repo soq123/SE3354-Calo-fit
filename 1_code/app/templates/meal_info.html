@@ -41,8 +41,44 @@
   </div>
 </div>
 
-<div class="d-flex gap-2">
+<div class="d-flex gap-2 flex-wrap">
   <a href="/meals/{{ meal['meal_id'] }}/edit" class="btn-cf-outline">✏️ Edit Meal</a>
   <button class="btn-cf-danger delete-meal-btn" data-url="/meals/{{ meal['meal_id'] }}/delete">🗑️ Delete</button>
+  <button class="btn-cf-outline" id="saveFavBtn"
+          data-name="{{ meal['food_name'] }}"
+          data-calories="{{ meal['calories'] }}"
+          data-protein="{{ meal['protein'] }}"
+          data-carbs="{{ meal['carbs'] }}"
+          data-fats="{{ meal['fats'] }}"
+          data-iron="{{ meal.get('iron', 0) }}"
+          data-zinc="{{ meal.get('zinc', 0) }}"
+          data-calcium="{{ meal.get('calcium', 0) }}"
+          data-mealtype="{{ meal['meal_type'] }}">⭐ Save to Favourites</button>
 </div>
+
+<script>
+document.getElementById('saveFavBtn')?.addEventListener('click', function () {
+  const d = this.dataset;
+  fetch('/api/favorites', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      food_name: d.name,
+      calories:  parseFloat(d.calories)  || 0,
+      protein:   parseFloat(d.protein)   || 0,
+      carbs:     parseFloat(d.carbs)     || 0,
+      fats:      parseFloat(d.fats)      || 0,
+      iron:      parseFloat(d.iron)      || 0,
+      zinc:      parseFloat(d.zinc)      || 0,
+      calcium:   parseFloat(d.calcium)   || 0,
+      meal_type: d.mealtype || null,
+    })
+  }).then(r => r.json()).then(res => {
+    if (res.status === 'ok') {
+      this.textContent = '✓ Saved to Favourites!';
+      this.disabled = true;
+    }
+  });
+});
+</script>
 {% endblock %}
