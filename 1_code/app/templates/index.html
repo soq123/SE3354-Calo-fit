@@ -133,17 +133,17 @@
       </div>
       <div class="d-flex justify-content-around mb-2">
         <div class="macro-chip">
-          <span class="icon">💪</span>
+          <img src="{{ url_for('static', filename='protein.png') }}" class="chip-img" alt="Protein">
           <span class="value">{{ macros['total_protein'] | round(1) }}g</span>
           <span class="label">Protein</span>
         </div>
         <div class="macro-chip">
-          <span class="icon">🌾</span>
+          <img src="{{ url_for('static', filename='carbs.png') }}" class="chip-img" alt="Carbs">
           <span class="value">{{ macros['total_carbs'] | round(1) }}g</span>
           <span class="label">Carbs</span>
         </div>
         <div class="macro-chip">
-          <span class="icon">💧</span>
+          <img src="{{ url_for('static', filename='fats.png') }}" class="chip-img" alt="Fats">
           <span class="value">{{ macros['total_fats'] | round(1) }}g</span>
           <span class="label">Fats</span>
         </div>
@@ -151,17 +151,17 @@
       <div style="border-top:1px solid #e8e0d0;margin:0 -0.25rem 0.6rem;"></div>
       <div class="d-flex justify-content-around">
         <div class="macro-chip micro-chip">
-          <span class="icon">🩸</span>
+          <img src="{{ url_for('static', filename='iron.png') }}" class="chip-img" alt="Iron">
           <span class="value">{{ macros['total_iron'] | round(1) }}mg</span>
           <span class="label">Iron</span>
         </div>
         <div class="macro-chip micro-chip">
-          <span class="icon">⚡</span>
+          <img src="{{ url_for('static', filename='zinc.png') }}" class="chip-img" alt="Zinc">
           <span class="value">{{ macros['total_zinc'] | round(1) }}mg</span>
           <span class="label">Zinc</span>
         </div>
         <div class="macro-chip micro-chip">
-          <span class="icon">🦴</span>
+          <img src="{{ url_for('static', filename='calcium.png') }}" class="chip-img" alt="Calcium">
           <span class="value">{{ macros['total_calcium'] | round(1) }}mg</span>
           <span class="label">Calcium</span>
         </div>

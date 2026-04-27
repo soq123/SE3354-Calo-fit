@@ -431,6 +431,12 @@ body {
 }
 .macro-chip .icon { font-size: 1.1rem; }
 
+.chip-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
 .micro-chip .value {
   font-size: 0.88rem;
   color: var(--green-dark);
