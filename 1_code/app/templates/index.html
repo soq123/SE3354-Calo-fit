@@ -32,20 +32,22 @@
       {% for meal in meals %}
       {% set mt = meal['meal_type'] %}
       {% if mt == 'Breakfast' %}
-        {% set icon = '☀️' %}{% set badge_cls = 'badge-breakfast' %}
+        {% set meal_img = 'breakfast.png' %}{% set badge_cls = 'badge-breakfast' %}
       {% elif mt == 'Lunch' %}
-        {% set icon = '🥗' %}{% set badge_cls = 'badge-lunch' %}
+        {% set meal_img = 'lunch.png' %}{% set badge_cls = 'badge-lunch' %}
       {% elif mt == 'Dinner' %}
-        {% set icon = '🍽️' %}{% set badge_cls = 'badge-dinner' %}
+        {% set meal_img = 'dinner.png' %}{% set badge_cls = 'badge-dinner' %}
       {% else %}
-        {% set icon = '🍎' %}{% set badge_cls = 'badge-snack' %}
+        {% set meal_img = 'snack.png' %}{% set badge_cls = 'badge-snack' %}
       {% endif %}
       <div class="col-md-4">
         <div class="meal-card">
           <div>
             <span class="cf-badge {{ badge_cls }}">{{ mt }}</span>
           </div>
-          <div class="meal-card-icon">{{ icon }}</div>
+          <div class="meal-card-icon">
+            <img src="{{ url_for('static', filename=meal_img) }}" alt="{{ mt }}" class="meal-type-img">
+          </div>
           <div class="meal-card-name">{{ meal['food_name'] }}</div>
           <div class="meal-card-time">🕐 {{ meal['log_time'] }}</div>
           <div class="meal-card-cals">{{ meal['calories'] }} kcal</div>
