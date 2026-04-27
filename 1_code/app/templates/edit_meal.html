@@ -15,16 +15,21 @@
     <div class="cf-card p-4">
       <form id="edit-meal-form" action="/meals/{{ meal['meal_id'] }}/edit">
 
-        <div class="mb-3">
+        <div class="mb-3" style="position:relative;">
           <label class="cf-label">Food Name <span style="color:#e74c3c;">*</span></label>
-          <div class="input-group">
-            <input type="text" class="form-control" id="food_name" name="food_name"
-                   value="{{ meal['food_name'] }}" required>
-            <button type="button" class="btn btn-outline-secondary" id="nutrition-lookup-btn">🔍 Lookup</button>
-          </div>
-          <div id="nutrition-feedback" class="small mt-1"></div>
-          <div id="nutrition-results" class="mt-2"></div>
+          <input type="text" class="form-control" id="food_name" name="food_name"
+                 value="{{ meal['food_name'] }}" autocomplete="off" required>
+          <div class="small text-muted mt-1">Start typing — nutrition info will appear automatically.</div>
+          <div id="nutrition-suggestions" class="nutrition-suggest-box" style="display:none;"></div>
         </div>
+
+        <div id="serving-section" class="mb-2 align-items-center gap-2" style="display:none;">
+          <span class="small text-muted">Serving size:</span>
+          <input id="serving-grams" type="number" class="form-control form-control-sm"
+                 style="width:75px" value="100" min="1" step="1">
+          <span class="small text-muted">g</span>
+        </div>
+        <div id="nutrition-applied-banner" class="nutrition-applied-banner" style="display:none;"></div>
 
         <div class="mb-3">
           <label class="cf-label">Meal Type <span style="color:#e74c3c;">*</span></label>
