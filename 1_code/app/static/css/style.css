@@ -305,10 +305,59 @@ body {
 }
 
 .meal-type-img {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
-  border-radius: 10px;
+  display: block;
+}
+
+/* ── Meal type image picker (form) ───────────────────────────────── */
+.meal-type-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+.meal-type-option input[type="radio"] {
+  display: none;
+}
+
+.meal-type-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.7rem 0.5rem;
+  border-radius: 14px;
+  border: 2px solid #e0d8c8;
+  background: var(--cream);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+  user-select: none;
+}
+
+.meal-type-label img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.meal-type-label span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-mid);
+}
+
+.meal-type-label:hover {
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+  transform: translateY(-2px);
+}
+
+.meal-type-option input[type="radio"]:checked + .meal-type-label {
+  border-color: var(--green-dark);
+  background: var(--green-pale);
+  box-shadow: 0 0 0 3px rgba(61,107,80,0.15);
 }
 
 .meal-card-name {

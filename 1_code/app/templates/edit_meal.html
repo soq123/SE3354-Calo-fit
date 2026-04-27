@@ -28,11 +28,17 @@
 
         <div class="mb-3">
           <label class="cf-label">Meal Type <span style="color:#e74c3c;">*</span></label>
-          <select class="form-select" id="meal_type" name="meal_type" required>
-            {% for t, icon in [('Breakfast','☀️'),('Lunch','🥗'),('Dinner','🍽️'),('Snack','🍎')] %}
-            <option value="{{ t }}" {% if meal['meal_type'] == t %}selected{% endif %}>{{ icon }} {{ t }}</option>
+          <div class="meal-type-picker">
+            {% for mt, img in [('Breakfast','breakfast.png'),('Lunch','lunch.png'),('Dinner','dinner.png'),('Snack','snack.png')] %}
+            <div class="meal-type-option">
+              <input type="radio" id="mt_{{ mt }}" name="meal_type" value="{{ mt }}" {% if meal['meal_type'] == mt %}checked{% endif %} required>
+              <label class="meal-type-label" for="mt_{{ mt }}">
+                <img src="{{ url_for('static', filename=img) }}" alt="{{ mt }}">
+                <span>{{ mt }}</span>
+              </label>
+            </div>
             {% endfor %}
-          </select>
+          </div>
         </div>
 
         <div class="mb-3">

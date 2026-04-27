@@ -28,13 +28,17 @@
 
         <div class="mb-3">
           <label class="cf-label">Meal Type <span style="color:#e74c3c;">*</span></label>
-          <select class="form-select" id="meal_type" name="meal_type" required>
-            <option selected disabled value="">Select type</option>
-            <option value="Breakfast">☀️ Breakfast</option>
-            <option value="Lunch">🥗 Lunch</option>
-            <option value="Dinner">🍽️ Dinner</option>
-            <option value="Snack">🍎 Snack</option>
-          </select>
+          <div class="meal-type-picker">
+            {% for mt, img in [('Breakfast','breakfast.png'),('Lunch','lunch.png'),('Dinner','dinner.png'),('Snack','snack.png')] %}
+            <div class="meal-type-option">
+              <input type="radio" id="mt_{{ mt }}" name="meal_type" value="{{ mt }}" required>
+              <label class="meal-type-label" for="mt_{{ mt }}">
+                <img src="{{ url_for('static', filename=img) }}" alt="{{ mt }}">
+                <span>{{ mt }}</span>
+              </label>
+            </div>
+            {% endfor %}
+          </div>
         </div>
 
         <div class="mb-3">
