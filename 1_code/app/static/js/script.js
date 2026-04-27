@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       lookupBtn.disabled = true;
-      lookupBtn.textContent = "Looking up…";
+      lookupBtn.innerHTML = "⏳ Searching…";
       setFeedback("", "");
       clearResults();
 
@@ -65,14 +65,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!res.ok || json.error) {
           setFeedback(json.error || "No data found.", "text-danger");
         } else {
-          setFeedback("Select a result to auto-fill nutrition info:", "text-muted");
+          setFeedback("Pick a match to auto-fill the nutrition fields:", "text-muted");
           renderResults(json.results);
         }
       } catch {
         setFeedback("Network error. Could not fetch nutrition data.", "text-danger");
       } finally {
         lookupBtn.disabled = false;
-        lookupBtn.textContent = "Lookup Nutrition";
+        lookupBtn.innerHTML = "🔍 Lookup";
       }
     });
   }
@@ -83,39 +83,43 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!nutritionResults) return;
     nutritionResults.innerHTML = "";
 
-    // Serving size row (persists after result selection)
+    // Serving size row
     const servingRow = document.createElement("div");
     servingRow.className = "d-flex align-items-center gap-2 mb-2";
     servingRow.innerHTML =
       `<span class="small text-muted">Serving size:</span>
        <input id="serving-grams" type="number" class="form-control form-control-sm"
               style="width:75px" value="100" min="1" step="1">
-       <span class="small text-muted">g &nbsp;(USDA values are per 100g)</span>`;
+       <span class="small text-muted">g (values are per 100g)</span>`;
     nutritionResults.appendChild(servingRow);
 
-    // Result buttons
-    const btnWrap = document.createElement("div");
-    btnWrap.id = "nutrition-result-btns";
+    // Result chips
+    const chipWrap = document.createElement("div");
+    chipWrap.id = "nutrition-result-btns";
+    chipWrap.style.cssText = "display:flex;flex-wrap:wrap;gap:0.4rem;";
     results.forEach((item) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "btn btn-sm btn-outline-primary me-1 mb-1";
-      btn.title = `Per 100g: ${item.calories} kcal | ${item.protein_g}g protein | ${item.carbohydrates_total_g}g carbs | ${item.fat_total_g}g fat`;
+      btn.style.cssText =
+        "border:1.5px solid #3d6b50;background:#f4faf6;color:#3d6b50;border-radius:20px;" +
+        "padding:0.25rem 0.8rem;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;";
+      btn.title = `Per 100g — Cal: ${item.calories} kcal | Protein: ${item.protein_g}g | Carbs: ${item.carbohydrates_total_g}g | Fat: ${item.fat_total_g}g`;
       btn.textContent = item.name;
+      btn.addEventListener("mouseenter", () => { btn.style.background = "#3d6b50"; btn.style.color = "#fff"; });
+      btn.addEventListener("mouseleave", () => { btn.style.background = "#f4faf6"; btn.style.color = "#3d6b50"; });
       btn.addEventListener("click", () => {
         selectedFood = item;
         applyNutrition();
-        // Remove result buttons; keep serving input for live adjustment
         document.getElementById("nutrition-result-btns")?.remove();
         const label = document.createElement("p");
         label.id = "selected-food-label";
         label.className = "small text-muted mb-0 mt-1";
-        label.textContent = `Selected: ${item.name}`;
+        label.textContent = `✔ Using: ${item.name}`;
         nutritionResults.appendChild(label);
       });
-      btnWrap.appendChild(btn);
+      chipWrap.appendChild(btn);
     });
-    nutritionResults.appendChild(btnWrap);
+    nutritionResults.appendChild(chipWrap);
 
     // Live recalculate when serving size changes
     document.getElementById("serving-grams").addEventListener("input", () => {
