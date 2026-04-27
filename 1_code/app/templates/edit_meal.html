@@ -58,6 +58,7 @@
                  min="0" value="{{ meal['calories'] }}" required>
         </div>
 
+        <p class="cf-label mb-1" style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;">Macronutrients</p>
         <div class="row">
           <div class="col-md-4 mb-3">
             <label class="cf-label">Protein (g)</label>
@@ -73,6 +74,25 @@
             <label class="cf-label">Fats (g)</label>
             <input type="number" step="0.1" class="form-control" id="fats" name="fats"
                    min="0" value="{{ meal['fats'] }}">
+          </div>
+        </div>
+
+        <p class="cf-label mb-1 mt-1" style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;">Micronutrients</p>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Iron (mg)</label>
+            <input type="number" step="0.1" class="form-control" id="iron" name="iron"
+                   min="0" value="{{ meal['iron'] or 0 }}">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Zinc (mg)</label>
+            <input type="number" step="0.1" class="form-control" id="zinc" name="zinc"
+                   min="0" value="{{ meal['zinc'] or 0 }}">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="cf-label">Calcium (mg)</label>
+            <input type="number" step="0.1" class="form-control" id="calcium" name="calcium"
+                   min="0" value="{{ meal['calcium'] or 0 }}">
           </div>
         </div>
 

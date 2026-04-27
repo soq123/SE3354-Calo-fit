@@ -2,13 +2,13 @@ from app.db import get_db
 
 
 def add_meal(user_id, food_name, calories, meal_type, log_date,
-             protein=0, carbs=0, fats=0):
+             protein=0, carbs=0, fats=0, iron=0, zinc=0, calcium=0):
     db = get_db()
     db.execute(
         """INSERT INTO meal_logs
-           (user_id, food_name, calories, protein, carbs, fats, meal_type, log_date)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        (user_id, food_name, calories, protein, carbs, fats, meal_type, log_date)
+           (user_id, food_name, calories, protein, carbs, fats, iron, zinc, calcium, meal_type, log_date)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (user_id, food_name, calories, protein, carbs, fats, iron, zinc, calcium, meal_type, log_date)
     )
     db.commit()
 
@@ -16,7 +16,8 @@ def add_meal(user_id, food_name, calories, meal_type, log_date,
 def get_meals_by_date(user_id, log_date):
     db = get_db()
     return db.execute(
-        """SELECT meal_id, food_name, calories, protein, carbs, fats, meal_type, log_time
+        """SELECT meal_id, food_name, calories, protein, carbs, fats,
+                  iron, zinc, calcium, meal_type, log_time
            FROM meal_logs
            WHERE user_id = ? AND log_date = ?
            ORDER BY log_time""",
@@ -39,9 +40,12 @@ def get_daily_macros(user_id, log_date):
     db = get_db()
     result = db.execute(
         """SELECT
-               COALESCE(SUM(protein), 0) AS total_protein,
-               COALESCE(SUM(carbs), 0)   AS total_carbs,
-               COALESCE(SUM(fats), 0)    AS total_fats
+               COALESCE(SUM(protein), 0)  AS total_protein,
+               COALESCE(SUM(carbs), 0)    AS total_carbs,
+               COALESCE(SUM(fats), 0)     AS total_fats,
+               COALESCE(SUM(iron), 0)     AS total_iron,
+               COALESCE(SUM(zinc), 0)     AS total_zinc,
+               COALESCE(SUM(calcium), 0)  AS total_calcium
            FROM meal_logs
            WHERE user_id = ? AND log_date = ?""",
         (user_id, log_date)
@@ -107,13 +111,16 @@ def delete_meal(meal_id, user_id):
     db.commit()
 
 
-def update_meal(meal_id, user_id, food_name, calories, protein, carbs, fats, meal_type, log_date):
+def update_meal(meal_id, user_id, food_name, calories, protein, carbs, fats,
+                meal_type, log_date, iron=0, zinc=0, calcium=0):
     db = get_db()
     db.execute(
         """UPDATE meal_logs
-           SET food_name = ?, calories = ?, protein = ?, carbs = ?, fats = ?, meal_type = ?, log_date = ?
+           SET food_name = ?, calories = ?, protein = ?, carbs = ?, fats = ?,
+               iron = ?, zinc = ?, calcium = ?, meal_type = ?, log_date = ?
            WHERE meal_id = ? AND user_id = ?""",
-        (food_name, calories, protein, carbs, fats, meal_type, log_date, meal_id, user_id)
+        (food_name, calories, protein, carbs, fats,
+         iron, zinc, calcium, meal_type, log_date, meal_id, user_id)
     )
     db.commit()
 

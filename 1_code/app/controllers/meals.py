@@ -75,13 +75,17 @@ def new_meal():
         protein = request.form.get("protein", 0)
         carbs = request.form.get("carbs", 0)
         fats = request.form.get("fats", 0)
+        iron = request.form.get("iron", 0)
+        zinc = request.form.get("zinc", 0)
+        calcium = request.form.get("calcium", 0)
 
         if not food_name or not meal_type or not log_date or not calories:
             flash("Please fill in all required fields.", "danger")
             return render_template("add_meal.html")
 
         add_meal(current_user.id, food_name, int(calories), meal_type, log_date,
-                 float(protein), float(carbs), float(fats))
+                 float(protein), float(carbs), float(fats),
+                 float(iron or 0), float(zinc or 0), float(calcium or 0))
         flash("Meal added successfully!", "success")
         return redirect(url_for("meals.home"))
 
@@ -124,12 +128,17 @@ def edit_meal(meal_id):
         protein = data.get("protein", 0)
         carbs = data.get("carbs", 0)
         fats = data.get("fats", 0)
+        iron = data.get("iron", 0)
+        zinc = data.get("zinc", 0)
+        calcium = data.get("calcium", 0)
 
         if not food_name or not meal_type or not log_date or not calories:
             return jsonify({"status": "error", "message": "Please fill in all required fields."}), 400
 
         update_meal(meal_id, current_user.id, food_name, int(calories),
-                    float(protein or 0), float(carbs or 0), float(fats or 0), meal_type, log_date)
+                    float(protein or 0), float(carbs or 0), float(fats or 0),
+                    meal_type, log_date,
+                    float(iron or 0), float(zinc or 0), float(calcium or 0))
         return jsonify({"status": "ok", "redirect": url_for("meals.meal_details", meal_id=meal_id)})
 
     return render_template("edit_meal.html", meal=meal)

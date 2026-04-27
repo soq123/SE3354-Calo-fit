@@ -141,15 +141,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const prot  = Math.round(selectedFood.protein_g * f * 10) / 10;
     const carb  = Math.round(selectedFood.carbohydrates_total_g * f * 10) / 10;
     const fat   = Math.round(selectedFood.fat_total_g * f * 10) / 10;
+    const iron  = Math.round((selectedFood.iron_mg  || 0) * f * 10) / 10;
+    const zinc  = Math.round((selectedFood.zinc_mg  || 0) * f * 10) / 10;
+    const calc  = Math.round((selectedFood.calcium_mg || 0) * f * 10) / 10;
 
     setValue("calories", cal);
     setValue("protein",  prot);
     setValue("carbs",    carb);
     setValue("fats",     fat);
+    setValue("iron",     iron);
+    setValue("zinc",     zinc);
+    setValue("calcium",  calc);
 
     const banner = document.getElementById("nutrition-applied-banner");
     if (banner) {
-      banner.textContent = `✔ ${selectedFood.name} — ${grams}g: ${cal} kcal · ${prot}g protein · ${carb}g carbs · ${fat}g fat`;
+      banner.textContent =
+        `✔ ${selectedFood.name} — ${grams}g: ${cal} kcal · ${prot}g protein · ${carb}g carbs · ${fat}g fat` +
+        ` · ${iron}mg iron · ${zinc}mg zinc · ${calc}mg calcium`;
       banner.style.display = "block";
     }
   }

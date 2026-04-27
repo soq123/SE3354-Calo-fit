@@ -5,7 +5,7 @@ def get_all_meals_for_user(user_id):
     db = get_db()
     rows = db.execute(
         """SELECT meal_id, food_name, calories, protein, carbs, fats,
-                  meal_type, log_date, log_time
+                  iron, zinc, calcium, meal_type, log_date, log_time
            FROM meal_logs
            WHERE user_id = ?
            ORDER BY log_date DESC, log_time DESC""",
@@ -18,7 +18,7 @@ def get_meal_by_id(meal_id):
     db = get_db()
     result = db.execute(
         """SELECT meal_id, user_id, food_name, calories, protein, carbs, fats,
-                  meal_type, log_date, log_time
+                  iron, zinc, calcium, meal_type, log_date, log_time
            FROM meal_logs
            WHERE meal_id = ?""",
         (meal_id,)
@@ -29,7 +29,8 @@ def get_meal_by_id(meal_id):
 def get_meals_by_type(user_id, meal_type, log_date):
     db = get_db()
     rows = db.execute(
-        """SELECT meal_id, food_name, calories, protein, carbs, fats, log_time
+        """SELECT meal_id, food_name, calories, protein, carbs, fats,
+                  iron, zinc, calcium, log_time
            FROM meal_logs
            WHERE user_id = ? AND meal_type = ? AND log_date = ?
            ORDER BY log_time""",
@@ -41,7 +42,7 @@ def get_meals_by_type(user_id, meal_type, log_date):
 def search_food_history(user_id, search_term):
     db = get_db()
     rows = db.execute(
-        """SELECT DISTINCT food_name, calories, protein, carbs, fats
+        """SELECT DISTINCT food_name, calories, protein, carbs, fats, iron, zinc, calcium
            FROM meal_logs
            WHERE user_id = ? AND food_name LIKE ?
            ORDER BY food_name""",
