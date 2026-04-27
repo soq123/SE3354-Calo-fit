@@ -187,7 +187,10 @@
             <br><br>Your mood seems low today. Try a balanced meal and take care of yourself. 💚
           {% endif %}
         </div>
-        <div class="mascot-placeholder">🧑</div>
+        <div class="mascot-placeholder">
+          <img src="{{ url_for('static', filename='mascot.webp') }}" alt="Mascot"
+               style="width:80px;height:80px;object-fit:cover;border-radius:50%;box-shadow:0 4px 16px rgba(0,0,0,.18);">
+        </div>
       </div>
     </div>
 
