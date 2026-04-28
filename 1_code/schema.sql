@@ -57,10 +57,11 @@ CREATE TABLE IF NOT EXISTS favorites (
 CREATE TABLE mood_logs (
     mood_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    mood TEXT NOT NULL,
+    mood TEXT NOT NULL CHECK(mood IN ('Happy', 'Focused', 'Neutral', 'Tired', 'Stressed')),
     energy_level INTEGER NOT NULL CHECK(energy_level BETWEEN 1 AND 5),
     notes TEXT,
     log_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    UNIQUE(user_id, log_date)
 );
