@@ -55,6 +55,25 @@ def _migrate(app):
         except OperationalError:
             pass  # table already exists
 
+def _seed_demo_user(app):
+    """Create a ready-to-use demo account if it doesn't exist yet."""
+    from werkzeug.security import generate_password_hash
+    with app.app_context():
+        db = get_db()
+        exists = db.execute(
+            "SELECT 1 FROM users WHERE email = 'demo@calofit.com'"
+        ).fetchone()
+        if not exists:
+            db.execute(
+                """INSERT INTO users (username, email, password_hash, calorie_goal, email_verified)
+                   VALUES (?, ?, ?, ?, ?)""",
+                ('demo', 'demo@calofit.com',
+                 generate_password_hash('demo1234'),
+                 2000, 1)
+            )
+            db.commit()
+
+
 def init_app(app):
     app.teardown_appcontext(close_db)
     instance_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'instance')
@@ -63,3 +82,4 @@ def init_app(app):
         if not tables_exist():
             init_db()
     _migrate(app)
+    _seed_demo_user(app)
