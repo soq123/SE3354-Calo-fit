@@ -1,24 +1,38 @@
 from app.db import get_db
 
 
-def add_mood_entry(user_id, mood, energy_level, note, log_date):
+def save_mood_entry(user_id, mood, energy_level, note, log_date):
     db = get_db()
     db.execute(
-        """INSERT INTO mood_logs (user_id, mood, energy_level, notes, log_date)
-           VALUES (?, ?, ?, ?, ?)""",
+        """
+        INSERT INTO mood_logs (user_id, mood, energy_level, notes, log_date)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(user_id, log_date)
+        DO UPDATE SET
+            mood = excluded.mood,
+            energy_level = excluded.energy_level,
+            notes = excluded.notes,
+            created_at = CURRENT_TIMESTAMP
+        """,
         (user_id, mood, energy_level, note, log_date),
     )
     db.commit()
 
 
+def add_mood_entry(user_id, mood, energy_level, note, log_date):
+    save_mood_entry(user_id, mood, energy_level, note, log_date)
+
+
 def get_latest_mood_for_date(user_id, log_date):
     db = get_db()
     row = db.execute(
-        """SELECT mood_id, mood, energy_level, notes, log_date, created_at
-           FROM mood_logs
-           WHERE user_id = ? AND log_date = ?
-           ORDER BY created_at DESC, mood_id DESC
-           LIMIT 1""",
+        """
+        SELECT mood_id, mood, energy_level, notes, log_date, created_at
+        FROM mood_logs
+        WHERE user_id = ? AND log_date = ?
+        ORDER BY created_at DESC, mood_id DESC
+        LIMIT 1
+        """,
         (user_id, log_date),
     ).fetchone()
     return dict(row) if row else None
@@ -27,11 +41,13 @@ def get_latest_mood_for_date(user_id, log_date):
 def get_recent_moods(user_id, limit=7):
     db = get_db()
     rows = db.execute(
-        """SELECT mood_id, mood, energy_level, notes, log_date, created_at
-           FROM mood_logs
-           WHERE user_id = ?
-           ORDER BY log_date DESC, created_at DESC
-           LIMIT ?""",
+        """
+        SELECT mood_id, mood, energy_level, notes, log_date, created_at
+        FROM mood_logs
+        WHERE user_id = ?
+        ORDER BY log_date DESC, created_at DESC
+        LIMIT ?
+        """,
         (user_id, limit),
     ).fetchall()
     return [dict(row) for row in rows]
@@ -40,14 +56,16 @@ def get_recent_moods(user_id, limit=7):
 def get_weekly_mood_summary(user_id, start_date, end_date):
     db = get_db()
     rows = db.execute(
-        """SELECT log_date,
-                  COUNT(*) AS entry_count,
-                  ROUND(AVG(energy_level), 1) AS avg_energy,
-                  GROUP_CONCAT(mood, ', ') AS moods
-           FROM mood_logs
-           WHERE user_id = ? AND log_date BETWEEN ? AND ?
-           GROUP BY log_date
-           ORDER BY log_date""",
+        """
+        SELECT log_date,
+               COUNT(*) AS entry_count,
+               ROUND(AVG(energy_level), 1) AS avg_energy,
+               GROUP_CONCAT(mood, ', ') AS moods
+        FROM mood_logs
+        WHERE user_id = ? AND log_date BETWEEN ? AND ?
+        GROUP BY log_date
+        ORDER BY log_date
+        """,
         (user_id, start_date, end_date),
     ).fetchall()
     return [dict(row) for row in rows]
@@ -56,11 +74,25 @@ def get_weekly_mood_summary(user_id, start_date, end_date):
 def get_top_moods(user_id, start_date, end_date):
     db = get_db()
     rows = db.execute(
-        """SELECT mood, COUNT(*) AS count
-           FROM mood_logs
-           WHERE user_id = ? AND log_date BETWEEN ? AND ?
-           GROUP BY mood
-           ORDER BY count DESC, mood ASC""",
+        """
+        SELECT mood, COUNT(*) AS count
+        FROM mood_logs
+        WHERE user_id = ? AND log_date BETWEEN ? AND ?
+        GROUP BY mood
+        ORDER BY count DESC, mood ASC
+        """,
         (user_id, start_date, end_date),
     ).fetchall()
     return [dict(row) for row in rows]
+
+
+def delete_mood_entry(user_id, mood_id):
+    db = get_db()
+    db.execute(
+        """
+        DELETE FROM mood_logs
+        WHERE user_id = ? AND mood_id = ?
+        """,
+        (user_id, mood_id),
+    )
+    db.commit()
