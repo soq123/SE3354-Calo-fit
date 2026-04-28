@@ -73,7 +73,20 @@
         {% for day in summary %}
         <tr>
           <td style="color:var(--text-muted);font-size:0.85rem;">{{ day['log_date'] }}</td>
-          <td style="font-weight:700;">{{ day['total_calories'] }} kcal</td>
+          <td>
+            {% set day_pct = [((day['total_calories'] / calorie_goal) * 100) | int, 100] | min if calorie_goal else 0 %}
+          
+            <div style="font-weight:700;">
+              {{ day['total_calories'] }} kcal
+            </div>
+          
+            <div class="cf-progress-bar" style="height:8px;margin-top:4px;">
+              <div
+                class="cf-progress-fill {% if day['total_calories'] > calorie_goal %}over{% endif %}"
+                style="width:{{ day_pct }}%">
+              </div>
+            </div>
+          </td>
           <td>{{ day['meal_count'] }}</td>
           <td>
             {% if day['total_calories'] <= calorie_goal %}
