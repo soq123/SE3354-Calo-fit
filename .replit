@@ -1,6 +1,7 @@
 modules = ["python-3.12", "web"]
 [agent]
 expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
 
 [nix]
 channel = "stable-25_05"
@@ -26,7 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python 1_code/run.py"
+args = "cd 1_code && python run.py"
 waitForPort = 5000
 
 [[ports]]
