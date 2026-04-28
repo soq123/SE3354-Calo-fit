@@ -105,7 +105,7 @@ def generate_recommendations(macros, calorie_goal, consumed, mood_entry=None):
 
     if linked:
         messages.append(
-            f"Your most recent mood ({mood_name}) is often associated with lower "
+            f"Because you logged {mood_name}, CaloFit checks for nutrition patterns related to "
             + ", ".join(flag.title() for flag in linked)
             + "."
         )
