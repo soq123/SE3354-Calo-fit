@@ -4,7 +4,7 @@
 {% block content %}
 <div class="cf-page-header">
   <div>
-    <h1>Mood Tracker 😊</h1>
+    <h1>Mood Tracker</h1>
     <p>Log how you feel and compare it with your nutrition patterns.</p>
   </div>
 </div>
@@ -12,16 +12,37 @@
 <div class="row g-4">
   <div class="col-lg-7">
     <div class="cf-card p-4">
-      <div class="cf-section-title mb-3">How are you feeling today?</div>
+      <div class="cf-section-title mb-3">How are you feeling?</div>
+
       <form action="/mood" method="POST">
+        <div class="mb-4">
+          <label class="cf-label" for="log_date">Date</label>
+          <input
+            class="form-control"
+            type="date"
+            id="log_date"
+            name="log_date"
+            value="{{ selected_date }}"
+          >
+        </div>
 
         <div class="mb-4">
           <label class="cf-label mb-2">Mood</label>
           <div class="mood-btn-group">
             {% for mood_val, emoji in [('Happy','😊'),('Focused','🎯'),('Neutral','😐'),('Tired','😴'),('Stressed','😰')] %}
             <div>
-              <input type="radio" class="btn-check" name="mood" id="mood_{{ mood_val | lower }}" value="{{ mood_val }}" autocomplete="off">
-              <label class="mood-btn" for="mood_{{ mood_val | lower }}">{{ emoji }} {{ mood_val }}</label>
+              <input
+                type="radio"
+                class="btn-check"
+                name="mood"
+                id="mood_{{ mood_val | lower }}"
+                value="{{ mood_val }}"
+                autocomplete="off"
+                {% if latest_mood and latest_mood['mood'] == mood_val %}checked{% endif %}
+              >
+              <label class="mood-btn" for="mood_{{ mood_val | lower }}">
+                {{ emoji }} {{ mood_val }}
+              </label>
             </div>
             {% endfor %}
           </div>
@@ -30,24 +51,46 @@
         <div class="mb-4">
           <label class="cf-label" for="energy_level">Energy Level</label>
           <select class="form-select" id="energy_level" name="energy_level">
-            <option selected disabled value="">Select energy level</option>
-            <option value="1">1 — Very low 😩</option>
-            <option value="2">2 — Low 😕</option>
-            <option value="3">3 — Moderate 😐</option>
-            <option value="4">4 — Good 🙂</option>
-            <option value="5">5 — High ⚡</option>
+            <option disabled value="" {% if not latest_mood %}selected{% endif %}>
+              Select energy level
+            </option>
+
+            {% for level, label in [
+              ('1', '1 — Very low 😩'),
+              ('2', '2 — Low 😕'),
+              ('3', '3 — Moderate 😐'),
+              ('4', '4 — Good 🙂'),
+              ('5', '5 — High ⚡')
+            ] %}
+            <option
+              value="{{ level }}"
+              {% if latest_mood and latest_mood['energy_level']|string == level %}selected{% endif %}
+            >
+              {{ label }}
+            </option>
+            {% endfor %}
           </select>
         </div>
 
         <div class="mb-4">
-          <label class="cf-label" for="mood_notes">Notes <span style="color:var(--text-muted);font-weight:500;">(optional)</span></label>
-          <textarea class="form-control" id="mood_notes" name="mood_notes" rows="3"
-                    placeholder="Sleep, hunger, stress, or how food may be affecting your day"></textarea>
+          <label class="cf-label" for="mood_notes">
+            Notes
+            <span style="color:var(--text-muted);font-weight:500;">(optional)</span>
+          </label>
+          <textarea
+            class="form-control"
+            id="mood_notes"
+            name="mood_notes"
+            rows="3"
+            placeholder="Sleep, hunger, stress, or how food may be affecting your day"
+          >{{ latest_mood['notes'] if latest_mood else '' }}</textarea>
         </div>
 
         <div class="d-flex gap-2">
           <a href="/" class="btn-cf-ghost">← Dashboard</a>
-          <button type="submit" class="btn-cf-primary">Save Entry ✓</button>
+          <button type="submit" class="btn-cf-primary">
+            Save Entry ✓
+          </button>
         </div>
       </form>
     </div>
@@ -58,15 +101,52 @@
       <div class="table-responsive">
         <table class="cf-table">
           <thead>
-            <tr><th>Date</th><th>Mood</th><th>Energy</th><th>Notes</th></tr>
+            <tr>
+              <th>Date</th>
+              <th>Mood</th>
+              <th>Energy</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
           </thead>
+
           <tbody>
             {% for entry in recent_moods %}
             <tr>
-              <td style="color:var(--text-muted);font-size:0.83rem;">{{ entry['log_date'] }}</td>
-              <td style="font-weight:700;">{{ entry['mood'] }}</td>
-              <td>{{ entry['energy_level'] }}/5</td>
-              <td style="color:var(--text-muted);font-size:0.83rem;">{{ entry['notes'] or '—' }}</td>
+              <td style="color:var(--text-muted);font-size:0.83rem;">
+                {{ entry['log_date'] }}
+              </td>
+
+              <td style="font-weight:700;">
+                {{ entry['mood'] }}
+              </td>
+
+              <td>
+                {{ entry['energy_level'] }}/5
+              </td>
+
+              <td style="color:var(--text-muted);font-size:0.83rem;">
+                {{ entry['notes'] or '—' }}
+              </td>
+
+              <td>
+                <a
+                  href="{{ url_for('mood.mood_tracker', date=entry['log_date']) }}"
+                  class="btn-cf-outline btn-sm"
+                >
+                  Edit
+                </a>
+
+                <form
+                  action="{{ url_for('mood.delete_mood', mood_id=entry['mood_id']) }}"
+                  method="POST"
+                  style="display:inline;"
+                >
+                  <button type="submit" class="btn-cf-ghost btn-sm">
+                    Delete
+                  </button>
+                </form>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -79,25 +159,60 @@
   <div class="col-lg-5">
     <div class="cf-card p-4 mb-3">
       <div class="cf-section-title mb-2">💡 Nutrition Insight</div>
+
       {% if latest_mood %}
         <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.5rem;">
-          Today's mood: <strong>{{ latest_mood['mood'] }}</strong> · Energy {{ latest_mood['energy_level'] }}/5
+          Selected date mood:
+          <strong>{{ latest_mood['mood'] }}</strong>
+          · Energy {{ latest_mood['energy_level'] }}/5
+        </p>
+      {% else %}
+        <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem;">
+          No mood entry has been logged for this date yet.
         </p>
       {% endif %}
-      <p style="font-size:0.88rem;color:var(--text-mid);margin:0;">{{ recommendations['message'] }}</p>
+
+      <p style="font-size:0.88rem;color:var(--text-mid);margin:0;">
+        {{ recommendations['message'] }}
+      </p>
+    </div>
+
+    <div class="cf-card p-4 mb-3">
+      <div class="cf-section-title mb-3">📊 Weekly Mood Summary</div>
+
+      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.4rem;">
+        Top mood:
+        <strong>{{ weekly_mood_summary['top_mood'] }}</strong>
+      </p>
+
+      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.4rem;">
+        Average energy:
+        <strong>{{ weekly_mood_summary['avg_energy'] }}/5</strong>
+      </p>
+
+      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0;">
+        Entries this week:
+        <strong>{{ weekly_mood_summary['entries'] }}</strong>
+      </p>
     </div>
 
     <div class="cf-card p-4">
       <div class="cf-section-title mb-3">🥦 Suggested Foods</div>
+
       {% if recommendations['foods'] %}
       <ul style="padding-left:1.2rem;margin-bottom:1rem;">
         {% for food in recommendations['foods'] %}
-        <li style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.3rem;">{{ food }}</li>
+        <li style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.3rem;">
+          {{ food }}
+        </li>
         {% endfor %}
       </ul>
       {% else %}
-      <p style="font-size:0.88rem;color:var(--text-muted);">Your nutrition looks balanced today! Keep it up.</p>
+      <p style="font-size:0.88rem;color:var(--text-muted);">
+        Your nutrition looks balanced today! Keep it up.
+      </p>
       {% endif %}
+
       <a href="/foods" class="btn-cf-outline">🔍 Search Foods</a>
     </div>
   </div>
