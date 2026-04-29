@@ -201,7 +201,8 @@
         <div class="stat-label">Daily Goal</div>
         <div class="stat-value">{{ calorie_goal }} kcal</div>
       </div>
-      <a href="/register" class="btn-cf-outline" style="white-space:nowrap;">Edit Goal</a>
+      <button type="button" class="btn-cf-outline" style="white-space:nowrap;"
+              data-bs-toggle="modal" data-bs-target="#goalModal">Edit Goal</button>
     </div>
 
     {# Streak #}
@@ -256,6 +257,57 @@
   </div>
 </div>
 
+{# Edit Daily Goal Modal #}
+<div class="modal fade" id="goalModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:1.2rem;border:none;box-shadow:0 8px 40px rgba(0,0,0,.12);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" style="color:var(--text-dark);">
+          🎯 Edit Daily Calorie Goal
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('meals.update_goal') }}" method="POST">
+        <div class="modal-body pt-2">
+          <p class="text-muted small mb-3">
+            Set your daily calorie target. This will update the dashboard progress calculation.
+          </p>
+
+          <label class="cf-label" for="calorie_goal">Daily Goal</label>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              id="calorie_goal"
+              name="calorie_goal"
+              value="{{ calorie_goal }}"
+              min="1000"
+              max="10000"
+              step="50"
+              required
+            >
+            <span class="input-group-text">kcal</span>
+          </div>
+
+          <div class="small text-muted mt-2">
+            Recommended range: 1000–10000 kcal.
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-cf-ghost" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-cf-primary">
+            Save Goal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {# Set Limits Modal #}
 <div class="modal fade" id="limitsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -300,3 +352,15 @@ document.getElementById('saveLimitsBtn')?.addEventListener('click', () => {
 });
 </script>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+            

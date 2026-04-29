@@ -8,6 +8,7 @@ from app.models.meal import (
 from app.models.food_entry import get_all_meals_for_user, get_meal_by_id
 from app.models.mood import get_latest_mood_for_date
 from app.models.meal_limit import get_limits, get_meal_type_totals
+from app.models.user import update_calorie_goal
 from app.services.insights import generate_recommendations
 
 TIPS = [
@@ -157,3 +158,19 @@ def delete_meal_entry(meal_id):
         return jsonify({"status": "error", "message": "Meal not found."}), 404
     delete_meal(meal_id, current_user.id)
     return jsonify({"status": "ok", "redirect": url_for("meals.meal_history")})
+
+
+@meals_bp.route("/meals/update_goal", methods=["POST"])
+@login_required
+def update_goal():
+    try:
+        new_goal = int(request.form.get("calorie_goal", 0))
+    except (ValueError, TypeError):
+        flash("Invalid calorie goal value.", "danger")
+        return redirect(url_for("meals.home"))
+    if new_goal < 1000 or new_goal > 10000:
+        flash("Calorie goal must be between 1000 and 10000 kcal.", "danger")
+        return redirect(url_for("meals.home"))
+    update_calorie_goal(current_user.id, new_goal)
+    flash("Daily calorie goal updated!", "success")
+    return redirect(url_for("meals.home"))

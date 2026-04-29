@@ -65,3 +65,11 @@ def update_password(user_id, password_hash):
         "UPDATE users SET password_hash = ? WHERE user_id = ?", (password_hash, user_id)
     )
     db.commit()
+
+
+def update_calorie_goal(user_id, calorie_goal):
+    db = get_db()
+    db.execute(
+        "UPDATE users SET calorie_goal = ? WHERE user_id = ?", (calorie_goal, user_id)
+    )
+    db.commit()
