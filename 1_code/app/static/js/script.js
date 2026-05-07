@@ -44,8 +44,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const suggestionBox   = document.getElementById("nutrition-suggestions");
   const servingSection  = document.getElementById("serving-section");
   const servingGrams    = document.getElementById("serving-grams");
+  const servingsCount   = document.getElementById("servings-count");
+  const servingsMinus   = document.getElementById("servings-minus");
+  const servingsPlus    = document.getElementById("servings-plus");
 
   if (!foodNameInput || !suggestionBox) return;
+
+  // ── Servings +/− buttons ─────────────────────────────────────────────────
+  if (servingsMinus) {
+    servingsMinus.addEventListener("click", () => {
+      const current = parseFloat(servingsCount.value) || 1;
+      const next = Math.max(0.5, Math.round((current - 0.5) * 10) / 10);
+      servingsCount.value = next;
+      applyNutrition();
+    });
+  }
+  if (servingsPlus) {
+    servingsPlus.addEventListener("click", () => {
+      const current = parseFloat(servingsCount.value) || 1;
+      const next = Math.round((current + 0.5) * 10) / 10;
+      servingsCount.value = next;
+      applyNutrition();
+    });
+  }
+  if (servingsCount) {
+    servingsCount.addEventListener("input", () => applyNutrition());
+  }
 
   let debounceTimer = null;
   let selectedFood  = null;
@@ -135,8 +159,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyNutrition() {
     if (!selectedFood) return;
-    const grams = parseFloat(servingGrams?.value) || 100;
-    const f     = grams / 100;
+    const grams    = parseFloat(servingGrams?.value) || 100;
+    const servings = Math.max(0.5, parseFloat(servingsCount?.value) || 1);
+    const f        = (grams / 100) * servings;
     const cal   = Math.round(selectedFood.calories * f);
     const prot  = Math.round(selectedFood.protein_g * f * 10) / 10;
     const carb  = Math.round(selectedFood.carbohydrates_total_g * f * 10) / 10;
@@ -155,8 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const banner = document.getElementById("nutrition-applied-banner");
     if (banner) {
+      const servingLabel = servings === 1 ? "1 serving" : `${servings} servings`;
       banner.textContent =
-        `✔ ${selectedFood.name} — ${grams}g: ${cal} kcal · ${prot}g protein · ${carb}g carbs · ${fat}g fat` +
+        `✔ ${selectedFood.name} — ${servingLabel} × ${grams}g: ${cal} kcal · ${prot}g protein · ${carb}g carbs · ${fat}g fat` +
         ` · ${iron}mg iron · ${zinc}mg zinc · ${calc}mg calcium`;
       banner.style.display = "block";
     }
