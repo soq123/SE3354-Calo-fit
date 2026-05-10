@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 
 from app.models.meal import get_daily_macros, get_remaining_calories
 from app.models.mood import (
@@ -19,13 +19,24 @@ mood_bp = Blueprint("mood", __name__)
 VALID_MOODS = {"Happy", "Focused", "Neutral", "Tired", "Stressed"}
 
 
+def _clean_log_date(raw_date):
+    """Return a safe YYYY-MM-DD date string for mood lookup and form reuse."""
+    fallback = date.today().isoformat()
+    candidate = (raw_date or fallback).strip()
+    try:
+        return date.fromisoformat(candidate).isoformat()
+    except ValueError:
+        return fallback
+
+
 @mood_bp.route("/mood", methods=["GET", "POST"])
 @login_required
 def mood_tracker():
     today = date.today().isoformat()
+    selected_date = _clean_log_date(request.values.get("date") or today)
 
     if request.method == "POST":
-        selected_date = request.form.get("log_date", today).strip() or today
+        selected_date = _clean_log_date(request.form.get("log_date") or today)
         mood = request.form.get("mood", "").strip()
         energy_level = request.form.get("energy_level", "").strip()
         mood_notes = request.form.get("mood_notes", "").strip()
@@ -42,21 +53,21 @@ def mood_tracker():
                 mood_notes,
                 selected_date,
             )
-            flash("Mood entry saved!", "success")
+            flash("Mood entry saved! Your nutrition insight has been updated.", "success")
             return redirect(url_for("mood.mood_tracker", date=selected_date))
-    else:
-        selected_date = request.args.get("date", today)
 
     latest_mood = get_latest_mood_for_date(current_user.id, selected_date)
     recent_moods = get_recent_moods(current_user.id, limit=7)
 
     remaining = get_remaining_calories(current_user.id, selected_date)
     macros = get_daily_macros(current_user.id, selected_date)
+    consumed = remaining.get("consumed", 0)
+    calorie_goal = remaining.get("calorie_goal", 0)
 
     recommendations = generate_recommendations(
         macros,
-        remaining["calorie_goal"],
-        remaining["consumed"],
+        calorie_goal,
+        consumed,
         latest_mood,
     )
 
@@ -84,6 +95,10 @@ def mood_tracker():
         recommendations=recommendations,
         selected_date=selected_date,
         weekly_mood_summary=weekly_mood_summary,
+        macros=macros,
+        calorie_goal=calorie_goal,
+        consumed=consumed,
+        calories_remaining=remaining.get("remaining", 0),
     )
 
 

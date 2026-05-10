@@ -5,7 +5,7 @@
 <div class="cf-page-header">
   <div>
     <h1>Mood Tracker</h1>
-    <p>Log how you feel and compare it with your nutrition patterns.</p>
+    <p>Log how you feel and connect mood, energy, and food choices.</p>
   </div>
 </div>
 
@@ -155,6 +155,7 @@
                   action="{{ url_for('mood.delete_mood', mood_id=entry['mood_id']) }}"
                   method="POST"
                   style="display:inline;"
+                  onsubmit="return confirm('Delete this mood entry?');"
                 >
                   <button type="submit" class="btn-cf-ghost btn-sm">
                     Delete
@@ -171,63 +172,103 @@
   </div>
 
   <div class="col-lg-5">
-    <div class="cf-card p-4 mb-3">
+    <div class="cf-card p-4 mb-3 nutrition-insight-card">
       <div class="cf-section-title mb-2">💡 Nutrition Insight</div>
 
       {% if latest_mood %}
-        <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.5rem;">
+        <p class="insight-muted">
           Selected date mood:
           <strong>{{ latest_mood['mood'] }}</strong>
           · Energy {{ latest_mood['energy_level'] }}/5
         </p>
       {% else %}
-        <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem;">
-          No mood entry has been logged for this date yet.
+        <p class="insight-muted">
+          No mood entry has been logged for this date yet. Recommendations are based on today's nutrition totals only.
         </p>
       {% endif %}
 
-      <p style="font-size:0.88rem;color:var(--text-mid);margin:0;">
+      <p class="insight-message">
         {{ recommendations['message'] }}
       </p>
+
+      <div class="insight-meter-grid">
+        <div class="insight-meter">
+          <span class="meter-label">Calories</span>
+          <strong>{{ consumed|round(0)|int }}</strong>
+          <span class="meter-sub">/ {{ calorie_goal }} kcal</span>
+        </div>
+        <div class="insight-meter">
+          <span class="meter-label">Protein</span>
+          <strong>{{ macros['total_protein']|round(1) }}g</strong>
+          <span class="meter-sub">target {{ recommendations['targets']['protein'] }}g</span>
+        </div>
+        <div class="insight-meter">
+          <span class="meter-label">Carbs</span>
+          <strong>{{ macros['total_carbs']|round(1) }}g</strong>
+          <span class="meter-sub">target {{ recommendations['targets']['carbs'] }}g</span>
+        </div>
+        <div class="insight-meter">
+          <span class="meter-label">Fats</span>
+          <strong>{{ macros['total_fats']|round(1) }}g</strong>
+          <span class="meter-sub">target {{ recommendations['targets']['fats'] }}g</span>
+        </div>
+      </div>
+
+      {% if recommendations['deficiencies'] %}
+      <div class="insight-tags">
+        {% for flag in recommendations['deficiencies'] %}
+          <span class="insight-tag">{{ flag|title }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
 
     <div class="cf-card p-4 mb-3">
       <div class="cf-section-title mb-3">📊 Weekly Mood Summary</div>
 
-      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.4rem;">
-        Top mood:
-        <strong>{{ weekly_mood_summary['top_mood'] }}</strong>
-      </p>
-
-      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.4rem;">
-        Average energy:
-        <strong>{{ weekly_mood_summary['avg_energy'] }}/5</strong>
-      </p>
-
-      <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0;">
-        Entries this week:
-        <strong>{{ weekly_mood_summary['entries'] }}</strong>
-      </p>
+      <div class="weekly-mood-grid">
+        <div class="cf-stat-pill">
+          <div class="num">{{ weekly_mood_summary['top_mood'] }}</div>
+          <div class="lbl">Top Mood</div>
+        </div>
+        <div class="cf-stat-pill">
+          <div class="num">{{ weekly_mood_summary['avg_energy'] }}</div>
+          <div class="lbl">Avg Energy</div>
+        </div>
+        <div class="cf-stat-pill">
+          <div class="num">{{ weekly_mood_summary['entries'] }}</div>
+          <div class="lbl">Entries</div>
+        </div>
+      </div>
     </div>
 
     <div class="cf-card p-4">
-      <div class="cf-section-title mb-3">🥦 Suggested Foods</div>
+      <div class="cf-section-title mb-3">🥦 Recommendation Engine</div>
 
-      {% if recommendations['foods'] %}
-      <ul style="padding-left:1.2rem;margin-bottom:1rem;">
-        {% for food in recommendations['foods'] %}
-        <li style="font-size:0.9rem;color:var(--text-mid);margin-bottom:0.3rem;">
-          {{ food }}
-        </li>
-        {% endfor %}
-      </ul>
+      {% if recommendations['items'] %}
+        <div class="rec-list">
+          {% for item in recommendations['items'] %}
+          <div class="rec-card">
+            <div class="rec-topline">
+              <strong>{{ item['name'] }}</strong>
+              <span>{{ item['reason_tag'] }}</span>
+            </div>
+            <p>{{ item['why'] }}</p>
+            <div class="rec-meta">
+              <span>{{ item['meal_type'] }}</span>
+              <span>~{{ item['calories'] }} kcal</span>
+              <span>{{ item['fit_note'] }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       {% else %}
-      <p style="font-size:0.88rem;color:var(--text-muted);">
-        Your nutrition looks balanced today! Keep it up.
-      </p>
+        <p class="insight-muted">
+          Your nutrition looks balanced today! Keep it up.
+        </p>
       {% endif %}
 
-      <a href="/foods" class="btn-cf-outline">🔍 Search Foods</a>
+      <a href="/foods" class="btn-cf-outline mt-3">🔍 Search Foods</a>
     </div>
   </div>
 </div>

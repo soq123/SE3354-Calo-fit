@@ -56,8 +56,34 @@
             <span><span class="macro-dot dot-c"></span>C: {{ meal['carbs'] }}g</span>
             <span><span class="macro-dot dot-f"></span>F: {{ meal['fats'] }}g</span>
           </div>
-          <div class="mt-auto pt-2">
+          <div class="mt-auto pt-2 d-flex flex-column gap-2">
             <a href="/meals/{{ meal['meal_id'] }}" class="btn-cf-outline" style="width:100%;justify-content:center;">View Meal</a>
+            <button type="button"
+                    class="btn-add-another"
+                    onclick="toggleRelogPanel(this)">
+              ➕ Add another
+            </button>
+            <div class="relog-panel" style="display:none;">
+              <div class="relog-qty-row">
+                <button type="button" class="relog-step" onclick="stepRelog(this,-1)">−</button>
+                <input type="number" class="relog-qty-input" value="1" min="1" step="1">
+                <button type="button" class="relog-step" onclick="stepRelog(this,1)">+</button>
+                <span class="relog-label">serving(s)</span>
+              </div>
+              <form method="POST" action="/meals/new" class="relog-form">
+                <input type="hidden" name="food_name"  value="{{ meal['food_name'] }}">
+                <input type="hidden" name="meal_type"  value="{{ meal['meal_type'] }}">
+                <input type="hidden" name="log_date"   value="{{ today }}">
+                <input type="hidden" name="calories"   data-base="{{ meal['calories'] }}"  value="{{ meal['calories'] }}">
+                <input type="hidden" name="protein"    data-base="{{ meal['protein'] }}"   value="{{ meal['protein'] }}">
+                <input type="hidden" name="carbs"      data-base="{{ meal['carbs'] }}"     value="{{ meal['carbs'] }}">
+                <input type="hidden" name="fats"       data-base="{{ meal['fats'] }}"      value="{{ meal['fats'] }}">
+                <input type="hidden" name="iron"       data-base="{{ meal['iron'] }}"      value="{{ meal['iron'] }}">
+                <input type="hidden" name="zinc"       data-base="{{ meal['zinc'] }}"      value="{{ meal['zinc'] }}">
+                <input type="hidden" name="calcium"    data-base="{{ meal['calcium'] }}"   value="{{ meal['calcium'] }}">
+                <button type="submit" class="btn-relog-confirm">Log ✓</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -213,7 +239,8 @@
         <div class="stat-label">Daily Goal</div>
         <div class="stat-value">{{ calorie_goal }} kcal</div>
       </div>
-      <a href="/register" class="btn-cf-outline" style="white-space:nowrap;">Edit Goal</a>
+      <button type="button" class="btn-cf-outline" style="white-space:nowrap;"
+              data-bs-toggle="modal" data-bs-target="#goalModal">Edit Goal</button>
     </div>
 
     {# Streak #}
@@ -268,6 +295,57 @@
   </div>
 </div>
 
+{# Edit Daily Goal Modal #}
+<div class="modal fade" id="goalModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:1.2rem;border:none;box-shadow:0 8px 40px rgba(0,0,0,.12);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" style="color:var(--text-dark);">
+          🎯 Edit Daily Calorie Goal
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('meals.update_goal') }}" method="POST">
+        <div class="modal-body pt-2">
+          <p class="text-muted small mb-3">
+            Set your daily calorie target. This will update the dashboard progress calculation.
+          </p>
+
+          <label class="cf-label" for="calorie_goal">Daily Goal</label>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              id="calorie_goal"
+              name="calorie_goal"
+              value="{{ calorie_goal }}"
+              min="1000"
+              max="10000"
+              step="50"
+              required
+            >
+            <span class="input-group-text">kcal</span>
+          </div>
+
+          <div class="small text-muted mt-2">
+            Recommended range: 1000–10000 kcal.
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-cf-ghost" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-cf-primary">
+            Save Goal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {# Set Limits Modal #}
 <div class="modal fade" id="limitsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -297,6 +375,35 @@
 </div>
 
 <script>
+function toggleRelogPanel(btn) {
+  const panel = btn.nextElementSibling;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? '➕ Add another' : '✕ Cancel';
+}
+
+function stepRelog(stepBtn, delta) {
+  const row = stepBtn.closest('.relog-qty-row');
+  const input = row.querySelector('.relog-qty-input');
+  const newVal = Math.max(1, (parseInt(input.value) || 1) + delta);
+  input.value = newVal;
+  updateRelogValues(row, newVal);
+}
+
+document.addEventListener('input', function(e) {
+  if (!e.target.classList.contains('relog-qty-input')) return;
+  const qty = Math.max(1, parseInt(e.target.value) || 1);
+  updateRelogValues(e.target.closest('.relog-qty-row'), qty);
+});
+
+function updateRelogValues(row, qty) {
+  const form = row.nextElementSibling;
+  form.querySelectorAll('input[data-base]').forEach(inp => {
+    const base = parseFloat(inp.dataset.base) || 0;
+    inp.value = Math.round(base * qty * 10) / 10;
+  });
+}
+
 document.getElementById('saveLimitsBtn')?.addEventListener('click', () => {
   const data = {};
   document.querySelectorAll('.limit-modal-input').forEach(inp => {
@@ -312,3 +419,15 @@ document.getElementById('saveLimitsBtn')?.addEventListener('click', () => {
 });
 </script>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+            

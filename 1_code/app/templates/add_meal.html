@@ -39,11 +39,25 @@
           <div id="nutrition-suggestions" class="nutrition-suggest-box" style="display:none;"></div>
         </div>
 
+        <div class="mb-3">
+          <label class="cf-label">Number of Servings</label>
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" id="servings-minus" class="btn-cf-outline"
+                    style="padding:0.3rem 0.75rem;font-size:1.1rem;line-height:1;">−</button>
+            <input id="servings-count" type="number" class="form-control text-center"
+                   style="width:70px;" value="1" min="0.5" step="0.5">
+            <button type="button" id="servings-plus" class="btn-cf-outline"
+                    style="padding:0.3rem 0.75rem;font-size:1.1rem;line-height:1;">+</button>
+            <span class="small text-muted">serving(s)</span>
+          </div>
+          <div class="small text-muted mt-1">All nutrition values will be multiplied by this number.</div>
+        </div>
+
         <div id="serving-section" class="mb-2 align-items-center gap-2" style="display:none;">
           <span class="small text-muted">Serving size:</span>
           <input id="serving-grams" type="number" class="form-control form-control-sm"
                  style="width:75px" value="100" min="1" step="1">
-          <span class="small text-muted">g</span>
+          <span class="small text-muted">g per serving</span>
         </div>
         <div id="nutrition-applied-banner" class="nutrition-applied-banner" style="display:none;"></div>
 
@@ -139,14 +153,15 @@
     document.querySelectorAll('.fav-log-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const f = JSON.parse(btn.dataset.fav);
+        const servings = Math.max(0.5, parseFloat(document.getElementById('servings-count')?.value) || 1);
         document.getElementById('food_name').value = f.food_name;
-        document.getElementById('calories').value = f.calories;
-        document.getElementById('protein').value = f.protein;
-        document.getElementById('carbs').value = f.carbs;
-        document.getElementById('fats').value = f.fats;
-        document.getElementById('iron').value = f.iron;
-        document.getElementById('zinc').value = f.zinc;
-        document.getElementById('calcium').value = f.calcium;
+        document.getElementById('calories').value = Math.round(f.calories * servings);
+        document.getElementById('protein').value = Math.round(f.protein * servings * 10) / 10;
+        document.getElementById('carbs').value = Math.round(f.carbs * servings * 10) / 10;
+        document.getElementById('fats').value = Math.round(f.fats * servings * 10) / 10;
+        document.getElementById('iron').value = Math.round((f.iron || 0) * servings * 10) / 10;
+        document.getElementById('zinc').value = Math.round((f.zinc || 0) * servings * 10) / 10;
+        document.getElementById('calcium').value = Math.round((f.calcium || 0) * servings * 10) / 10;
         if (f.meal_type) {
           const radio = document.querySelector(`input[name="meal_type"][value="${f.meal_type}"]`);
           if (radio) radio.checked = true;
