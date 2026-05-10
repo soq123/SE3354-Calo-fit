@@ -140,35 +140,56 @@ def mood_based_deficiencies(mood_entry):
 
 
 def _build_food_recommendations(flags, remaining_calories):
+    """Build a mixed recommendation list so mood-based flags are visible.
+
+    The first pass takes one food from each detected category. This prevents
+    calories/protein from always filling the whole list before mood-specific
+    categories like magnesium, iron, or fats can appear.
+    """
     remaining = _as_float(remaining_calories)
     seen = set()
     results = []
 
-    for flag in flags:
-        for food in FOOD_LIBRARY.get(flag, []):
-            name = food["name"]
-            if name in seen:
-                continue
+    def add_food(flag, food):
+        name = food["name"]
 
-            seen.add(name)
-            suggestion = dict(food)
-            suggestion["reason_tag"] = flag.title()
+        if name in seen:
+            return
 
-            if remaining > 0:
-                if suggestion["calories"] <= remaining + 150:
-                    suggestion["fit_note"] = "Fits today's remaining calories"
-                else:
-                    suggestion["fit_note"] = "Use a smaller portion today"
+        seen.add(name)
+
+        suggestion = dict(food)
+        suggestion["reason_tag"] = flag.title()
+
+        if remaining > 0:
+            if suggestion["calories"] <= remaining + 150:
+                suggestion["fit_note"] = "Fits today's remaining calories"
             else:
-                suggestion["fit_note"] = "Save for tomorrow or choose a light portion"
+                suggestion["fit_note"] = "Use a smaller portion today"
+        else:
+            suggestion["fit_note"] = "Save for tomorrow or choose a light portion"
 
-            results.append(suggestion)
+        results.append(suggestion)
+
+    # First pass: one suggestion per detected nutrition/mood category.
+    for flag in flags:
+        foods = FOOD_LIBRARY.get(flag, [])
+
+        if foods:
+            add_food(flag, foods[0])
+
+        if len(results) == 6:
+            return results
+
+    # Second pass: fill remaining slots with extra suggestions.
+    for flag in flags:
+        for food in FOOD_LIBRARY.get(flag, [])[1:]:
+            add_food(flag, food)
 
             if len(results) == 6:
                 return results
 
     return results
-
 
 def generate_recommendations(macros, calorie_goal, consumed, mood_entry=None):
     macro_flags, macro_reasons, targets = analyze_macro_deficiencies(
@@ -178,7 +199,7 @@ def generate_recommendations(macros, calorie_goal, consumed, mood_entry=None):
     )
 
     mood_flags, mood_reasons = mood_based_deficiencies(mood_entry)
-    all_flags = list(dict.fromkeys(macro_flags + mood_flags))
+    all_flags = list(dict.fromkeys(mood_flags + macro_flags))
 
     if not all_flags:
         all_flags = ["fiber"]
