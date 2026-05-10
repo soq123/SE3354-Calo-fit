@@ -244,8 +244,12 @@
     </div>
 
     <div class="cf-card p-4">
-      <div class="cf-section-title mb-3">🥦 Recommendation Engine</div>
-
+      <div class="cf-section-title mb-2">🥦 Recommendation Engine</div>
+    
+      <p class="insight-muted mb-3">
+        Suggestions are based on your selected mood, energy level, remaining calories, and today's nutrition focus areas.
+      </p>
+    
       {% if recommendations['items'] %}
         <div class="rec-list">
           {% for item in recommendations['items'] %}
