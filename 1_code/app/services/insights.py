@@ -220,10 +220,9 @@ def generate_recommendations(macros, calorie_goal, consumed, mood_entry=None):
         ]
 
     if macro_flags:
-        message = "Detected nutrition focus areas: " + ", ".join(flag.title() for flag in macro_flags) + "."
+        message = "Today's nutrition focus areas: " + ", ".join(flag.title() for flag in macro_flags) + "."
     else:
         message = "Today's logged nutrition is close to target, so suggestions focus on balance."
-
     if mood_reasons:
         message += " " + " ".join(mood_reasons) + "."
 
