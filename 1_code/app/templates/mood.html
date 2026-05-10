@@ -46,14 +46,15 @@
             {% for mood_val, emoji in [('Happy','😊'),('Focused','🎯'),('Neutral','😐'),('Tired','😴'),('Stressed','😰')] %}
             <div>
               <input
-                type="radio"
-                class="btn-check"
-                name="mood"
-                id="mood_{{ mood_val | lower }}"
-                value="{{ mood_val }}"
-                autocomplete="off"
-                {% if latest_mood and latest_mood['mood'] == mood_val %}checked{% endif %}
-              >
+                  type="radio"
+                  class="btn-check"
+                  name="mood"
+                  id="mood_{{ mood_val | lower }}"
+                  value="{{ mood_val }}"
+                  autocomplete="off"
+                  {% if loop.first %}required{% endif %}
+                  {% if latest_mood and latest_mood['mood'] == mood_val %}checked{% endif %}
+                >
               <label class="mood-btn" for="mood_{{ mood_val | lower }}">
                 {{ emoji }} {{ mood_val }}
               </label>
@@ -64,7 +65,7 @@
 
         <div class="mb-4">
           <label class="cf-label" for="energy_level">Energy Level</label>
-          <select class="form-select" id="energy_level" name="energy_level">
+          <select class="form-select" id="energy_level" name="energy_level" required>
             <option disabled value="" {% if not latest_mood %}selected{% endif %}>
               Select energy level
             </option>
